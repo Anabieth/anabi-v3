@@ -1,0 +1,29 @@
+@import "node_modules/bootstrap/scss/bootstrap-grid";
+
+.card-columns {
+  @media (min-width: 1440px) {
+    column-count: 4;
+  }
+  @include media-breakpoint-down(lg) {
+    column-count: 3;
+  }
+  @include media-breakpoint-down(md) {
+    column-count: 2;
+  }
+  @include media-breakpoint-down(xs) {
+    column-count: 1;
+  }
+}
+
+.card {
+  box-shadow: 4px 4px 8px -2px rgba(0, 0, 0, 0.3);
+}
+
+.value {
+  margin-right: 0.5rem;
+  white-space: nowrap;
+}
+
+.small {
+  font-size: 0.9rem;
+}

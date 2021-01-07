@@ -1,0 +1,46 @@
+<div class="modal-header border-bottom-0 pb-0">
+  <h4 class="modal-title">{{node.name}} - last measurements</h4>
+  <a class="close cursor-pointer" aria-label="Close" (click)="modal.dismiss();">
+    <span aria-hidden="true">&times;</span>
+  </a>
+</div>
+<div class="modal-body pt-1 pb-0">
+  <ngb-tabset (tabChange)="valueTypeChanged($event.nextId)">
+    <ngb-tab *ngFor="let val of measurements | keyvalue" [id]="val.key">
+      <ng-template ngbTabTitle>
+        <i class="fa" [ngClass]="getValueIcon(val.key)"></i>
+        <span class="pl-1">{{val.key | titlecase}}</span>
+      </ng-template>
+    </ngb-tab>
+  </ngb-tabset>
+
+  <canvas id="chartCanvas" class="mt-2"></canvas>
+
+  <table class="table table-hover table-sm mt-2 mb-0 small" style="transition: all 0.4s;">
+    <thead *ngIf="showTable">
+      <th class="border-top-0" scope="col">#</th>
+      <th class="border-top-0" scope="col">Date</th>
+      <th class="border-top-0 text-right" scope="col">Value, {{getValueUnit(selectedType)}}</th>
+    </thead>
+    <tbody *ngIf="showTable">
+    <tr *ngFor="let v of measurements[selectedType]; let i=index">
+      <th>{{i+1}}
+      <td [title]="v.ts | dateTime">{{v.ts | timeAgo:'withTime'}}</td>
+      <td class="text-right">
+        <span>{{v.value | number:'.3-3'}}</span>
+      </td>
+    </tr>
+    </tbody>
+    <tr class="pb-2">
+      <td colspan="3" class="text-center text-muted cursor-pointer" (click)="showTable = !showTable">
+        <i class="fa" [ngClass]="{ 'fa-angle-double-up': showTable, 'fa-angle-double-down': !showTable}"></i>
+        <span class="pl-1">{{ showTable ? 'Hide': 'Show'}} table</span>
+      </td>
+    </tr>
+  </table>
+
+
+</div>
+<div class="modal-footer">
+  <button type="button" class="btn btn-sm btn-outline-dark" (click)="modal.close('Close')" ngbAutofocus>Close</button>
+</div>

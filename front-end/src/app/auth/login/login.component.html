@@ -1,0 +1,14 @@
+<div [ngSwitch]="auth.state">
+  <p *ngSwitchCase="'initial'">
+    <i class="fa fa-spinner fa-spin"></i> Authenticating...
+  </p>
+  <p *ngSwitchCase="'renewing'">
+    <i class="fa fa-spinner fa-spin"></i> Renewing tokens...
+  </p>
+  <p *ngSwitchCase="'loggedIn'">
+    <i class="fa fa-spinner fa-spin"></i> Redirecting....
+  </p>
+  <p *ngSwitchDefault>
+    Please use <strong>Log In</strong> button to authenticate in the system!
+  </p>
+</div>

@@ -1,0 +1,30 @@
+<h1>
+  Workspace invitation
+</h1>
+
+<ng-container *ngIf="status == 'Valid'">
+  <p>You are about to join workspace <strong>{{workspace?.name}}</strong> owned by user
+    <strong>{{workspace?.owner}}</strong>.</p>
+  <p>
+    <button class="btn btn-outline-primary btn-table mr-1" (click)="confirm()">
+      Join wokspace
+    </button>
+    <button class="btn btn-outline-secondary btn-table mr-1" (click)="cancel()">
+      Cancel
+    </button>
+  </p>
+</ng-container>
+
+<p *ngIf="status == 'Joined'">Successfully joined workspace.</p>
+
+<p *ngIf="status == 'AlreadyJoined'">You already joined this workspace.</p>
+
+<p *ngIf="status == 'NotValid'">Provided invitation link is not valid.</p>
+
+<p *ngIf="status == 'OwnWorkspace'">You are trying to join your own workspace.</p>
+
+<p *ngIf="status != 'Valid'">
+  <button class="btn btn-outline-secondary btn-table mr-1" (click)="cancel()">
+    List workspaces
+  </button>
+</p>

@@ -1,0 +1,113 @@
+<h1>Reports and data export</h1>
+
+<form [formGroup]="queryForm">
+  <div class="row">
+    <div class="col-5">
+      <div class="form-group">
+        <label for="tsFrom" class="col-form-label">From</label>
+        <div class="form-row">
+          <div class="col-5">
+            <div class="input-group">
+              <input type="text" class="form-control" ngbDatepicker id="tsFrom" placeholder="yyyy-mm-dd"
+                formControlName="fromDate" required #dpFrom="ngbDatepicker" [displayMonths]="2">
+              <div class="input-group-append">
+                <button class="btn btn-outline-secondary" (click)="dpFrom.toggle()" type="button">
+                  <i class="fa fa-calendar-alt"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+          <div class="col-3">
+            <input type="text" class="form-control" placeholder="hh:mm"
+              pattern="([0-1]?[0-9]{1}|2[0-3]{1}):[0-5]{1}[0-9]{1}" formControlName="fromTime">
+          </div>
+
+        </div>
+      </div>
+    </div>
+    <div class="col-5 offset-1">
+      <div class="form-group form-row-x">
+        <label for="tsTo" class="col-form-label">To</label>
+        <div class="form-row">
+          <div class="col-5">
+            <div class="input-group">
+              <input type="text" class="form-control" ngbDatepicker id="tsTo" placeholder="yyyy-mm-dd"
+                formControlName="toDate" required #dpTo="ngbDatepicker" [displayMonths]="2">
+              <div class="input-group-append">
+                <button class="btn btn-outline-secondary" (click)="dpTo.toggle()" type="button">
+                  <i class="fa fa-calendar-alt"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+          <div class="col-3">
+            <input type="text" class="form-control" placeholder="hh:mm"
+              pattern="([0-1]?[0-9]{1}|2[0-3]{1}):[0-5]{1}[0-9]{1}" formControlName="toTime">
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-5">
+      <div class="form-group">
+        <label class="col-form-label">Nodes</label>
+        <app-node-select [nodes]="nodes" [useInput]="false" (nodeSelected)="nodeItemSelected($event)">
+        </app-node-select>
+
+        <div class="mt-1">
+          <div class="form-control form-control-sm bg-light" *ngIf="!selectedNodes.length">
+            No nodes selected for report! Use <strong>Search</strong> to find any.
+          </div>
+          <button *ngFor="let node of selectedNodes; index as i" class="btn btn-sm btn-outline-secondary mr-1 mb-1"
+            (click)="nodeItemRemoved(i)">
+            <app-node-label [node]="node"></app-node-label>
+          </button>
+        </div>
+      </div>
+    </div>
+    <div class="col-5 offset-1">
+      <div class="form-group">
+        <label for="repList" class="col-form-label">Reports</label>
+
+        <ng-template #reportSearchTemplate let-item="result" let-term="term">
+          <ngb-highlight class="pr-1" [result]="item.name" [term]="term"></ngb-highlight>
+        </ng-template>
+
+        <input type="text" class="form-control" placeholder="Search report by name or code"
+          [ngbTypeahead]="searchReport$" [resultTemplate]="reportSearchTemplate"
+          (focus)="manualReportEvents$.next($event.target.value)" (click)="manualReportEvents$.next($event.target.value)"
+          (selectItem)="reportItemSelected($event)">
+
+        <div class="mt-1">
+          <div class="form-control form-control-sm bg-light" *ngIf="!selectedReports.length">
+            No repors selected!
+          </div>
+          <button *ngFor="let rep of selectedReports; index as i" class="btn btn-sm btn-outline-secondary mr-1 mb-1"
+            (click)="reportItemRemoved(i)">
+            {{rep.name}}
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row pt-3-x border-top-x">
+    <div class="col">
+      <hr class="mt-0" />
+      <button class="btn btn-outline-primary mr-1" (click)="requestDataClicked()" [disabled]="queryForm.invalid">
+        <i class="fa fa-chart-line"></i> Plot data
+      </button>
+      <button class="btn btn-outline-primary mr-1" (click)="downloadClicked()" [disabled]="queryForm.invalid">
+        <i class="fa fa-download"></i> Download as CSV
+      </button>
+      <button class="btn btn-outline-secondary mr-1" (click)="resetClicked()">Reset</button>
+    </div>
+  </div>
+</form>
+
+<div class="row mt-2">
+  <div class="col">
+    <canvas id="chartCanvas"></canvas>
+  </div>
+</div>

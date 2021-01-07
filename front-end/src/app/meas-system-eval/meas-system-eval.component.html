@@ -1,0 +1,330 @@
+<h2 align="center">
+  Economic evaluation of remote monitoring systems
+</h2>
+<div class="container">
+  <div class="row-fluid">
+    <ngb-tabset justify="justified" activeId="tab-1" (tabChange)="onTabChange($event)">
+      <ngb-tab id="tab-1">
+        <ng-template ngbTabTitle>
+          <span [ngClass]="activeTab == 'tab-1' ? 'my-tab-active' : 'my-tab-non-active'">Profit calculation</span>
+        </ng-template>
+        <ng-template ngbTabContent>
+          <div class="card border-success mb-3 mt-3">
+            <div class="card-header text-success border-success bg-white">
+              <h5>Basic income</h5>
+            </div>
+            <div class="card-body">
+              <form>
+                <div class="form-group row">
+                  <label for="numOfColonies" class="col-form-label col-12 col-sm-12 col-md-6 col-lg-4 col-xl-4">Number of colonies (#):</label>
+                  <div class="col">
+                    <input type="number" class="form-control" id="numOfColonies" placeholder="# of colonies" name="numOfColonies" [(ngModel)]="numOfColonies" />
+                  </div>
+                </div>
+                <div class="form-group row">
+                  <label for="prodPerColony" class="col-form-label col-12 col-sm-12 col-md-6 col-lg-4 col-xl-4">Honey production per colony (kg):</label>
+                  <div class="col">
+                    <input type="number" class="form-control" id="prodPerColony" placeholder="kg" name="prodPerColony" [(ngModel)]="prodPerColony" />
+                  </div>
+                </div>
+                <div class="form-group row">
+                  <label for="honeyPrice" class="col-form-label col-12 col-sm-12 col-md-6 col-lg-4 col-xl-4">Honey price (EUR/kg):</label>
+                  <div class="col">
+                    <input type="number" class="form-control" id="honeyPrice" placeholder="EUR/kg" name="honeyPrice" [(ngModel)]="honeyPrice" />
+                  </div>
+                </div>
+              </form>
+            </div>
+            <div class="card-footer bg-white border-success">
+              <div class="form-group row">
+                <label for="incomeResult" class="col-form-label col-12 col-sm-12 col-md-6 col-lg-4 col-xl-4">
+                  <h6><b>Income (EUR):</b></h6>
+                </label>
+                <div class="col">
+                  <input type="text" readonly class="form-control" name="incomeResult" [value]="calcBasicIncome(prodPerColony) | number:'.2-2'" />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card border-danger bg-white mb-3">
+            <div class="card-header text-danger border-danger bg-white">
+              <h5>Expenses</h5>
+            </div>
+            <div class="card-body">
+              <div class="card border-dark mb-3">
+                <div class="card-header border-dark bg-white" (click)="inspectionCardBody = !inspectionCardBody">
+                  <span><b>Inspection expenses</b></span><i class="fas fa-2x float-right" [ngClass]="{'fa-plus':!inspectionCardBody,'fa-minus':inspectionCardBody}"></i>
+                </div>
+                <div class="card-body" *ngIf="inspectionCardBody">
+                  <form>
+                    <div class="form-group row">
+                      <label for="distToApiary" class="col-form-label col-12 col-sm-12 col-md-6 col-lg-4 col-xl-4">Distance to apiary (<i>one way</i>) (km):</label>
+                      <div class="col">
+                        <input type="number" class="form-control" id="distToApiary" placeholder="# of colonies" name="distToApiary" [(ngModel)]="distToApiary" />
+                      </div>
+                    </div>
+                    <div class="form-group row">
+                      <label for="fuelCons" class="col-form-label col-12 col-sm-12 col-md-6 col-lg-4 col-xl-4">Car fuel consumption per 100km (l):</label>
+                      <div class="col">
+                        <input type="number" class="form-control" id="fuelCons" placeholder="l" name="fuelCons" [(ngModel)]="fuelCons" />
+                      </div>
+                    </div>
+                    <div class="form-group row">
+                      <label for="fuelPrice" class="col-form-label col-12 col-sm-12 col-md-6 col-lg-4 col-xl-4">Fuel price (EUR/l):</label>
+                      <div class="col">
+                        <input type="number" class="form-control" id="fuelPrice" placeholder="EUR/l" name="fuelPrice" [(ngModel)]="fuelPrice" />
+                      </div>
+                    </div>
+                    <div class="form-group row">
+                      <label for="numOfInspections" class="col-form-label col-12 col-sm-12 col-md-6 col-lg-4 col-xl-4">Number of inspections per year:</label>
+                      <div class="col">
+                        <input type="number" class="form-control" id="numOfInspections" placeholder="" name="numOfInspections" [(ngModel)]="numOfInspections" />
+                      </div>
+                    </div>
+
+                    <div class="card border-dark bg-white mb-3">
+                      <div class="card-header border-dark bg-white">
+                        <span><b>Person costs</b></span>
+                      </div>
+                      <div class="card-body">
+                        <form>
+                          <div class="form-group row">
+                            <label for="persTime" class="col-form-label col-12 col-sm-12 col-md-6 col-lg-4 col-xl-4">Time needed for one inspection (min):</label>
+                            <div class="col">
+                              <input type="number" class="form-control" id="persTime" placeholder="min" name="persTime" [(ngModel)]="persTime" />
+                            </div>
+                          </div>
+                          <div class="form-group row">
+                            <label for="travelTime" class="col-form-label col-12 col-sm-12 col-md-6 col-lg-4 col-xl-4">Time needed for traveling (min):</label>
+                            <div class="col">
+                              <input type="number" class="form-control" id="travelTime" placeholder="min" name="travelTime" [(ngModel)]="travelTime" />
+                            </div>
+                          </div>
+                          <div class="form-group">
+                            <span (click)="addPerson()" class="person">
+                              <i class="fas fa-user-plus"></i>
+                              <label for="persons" class="col-6 control-label person">Add person</label>
+                            </span>
+                            <hr class="border-dark">
+                            <div class="form-group">
+                              <span *ngFor="let p of persons;let i=index">
+                                <div class="form-group row">
+                                  <i class="fas fa-user-minus person" (click)="removePerson(i)"></i>
+                                  <label for="hourWage" class="col-form-label col-12 col-sm-12 col-md-6 col-lg-4 col-xl-4">Hourly wage (EUR/h)</label>
+                                  <div class="col">
+                                    <input type="number" placeholder="Hourly Wage" class="form-control" [name]="'person'+i" [(ngModel)]="persons[i].wage" />
+                                  </div>
+                                </div>
+                              </span>
+                            </div>
+                          </div>
+                        </form>
+                      </div>
+                    </div>
+                  </form>
+                </div>
+                <div class="card-footer bg-white border-dark" *ngIf="inspectionCardBody">
+                  <div class="form-group row">
+                    <label for="expensesInspection" class="col-form-label col-12 col-sm-12 col-md-6 col-lg-4 col-xl-4"><i><b>Inspection expenses (EUR):</b></i></label>
+                    <div class="col">
+                      <input type="text" readonly class="form-control" name="expensesInspection" [value]="calcInspectionExpenses() | number:'.2-2'" />
+                    </div>
+                  </div>
+                  <div class="form-group row">
+                    <label for="expensesInspectionYear" class="col-form-label col-12 col-sm-12 col-md-6 col-lg-4 col-xl-4"><i><b>Inspection expenses per year (EUR):</b></i></label>
+                    <div class="col">
+                      <input type="text" readonly class="form-control" name="expensesInspectionYear" [value]="calcInspectionExpYear(numOfInspections) | number:'.2-2'" />
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="card border-dark mb-3">
+                <div class="card-header border-dark bg-white" (click)="deathCardBody = !deathCardBody">
+                  <span><b>Costs due to bee colony death</b></span><i class="fas fa-2x float-right" [ngClass]="{'fa-plus':!deathCardBody,'fa-minus':deathCardBody}"></i>
+                </div>
+                <div class="card-body" *ngIf="deathCardBody">
+                  <form>
+                    <div class="form-group row">
+                      <label for="rateDeath" class="col-form-label col-12 col-sm-12 col-md-6 col-lg-4 col-xl-4">Average bee death rate (%):</label>
+                      <div class="col">
+                        <input type="number" class="form-control" id="rateDeath" placeholder="%" name="rateDeath" [(ngModel)]="rateDeath" />
+                      </div>
+                    </div>
+                    <div class="form-group row">
+                      <label for="pColony" class="col-form-label col-12 col-sm-12 col-md-6 col-lg-4 col-xl-4">Colony value (EUR):</label>
+                      <div class="col">
+                        <input type="number" class="form-control" id="pColony" placeholder="EUR" name="pColony" [(ngModel)]="pColony" />
+                      </div>
+                    </div>
+                  </form>
+                </div>
+                <div class="card-footer bg-white border-dark" *ngIf="deathCardBody">
+                  <div class="form-group row">
+                    <label for="expensesDeath" class="col-form-label col-12 col-sm-12 col-md-6 col-lg-4 col-xl-4"><i><b>Colony death expenses (EUR):</b></i></label>
+                    <div class="col">
+                      <input type="text" readonly class="form-control" name="expensesDeath" [value]="calcDeathExpenses() | number:'.2-2'" />
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="card border-dark mb-3">
+                <div class="card-header border-dark bg-white" (click)="swarmCardBody = !swarmCardBody">
+                  <span><b>Costs due to swarming</b></span><i class="fas fa-2x float-right" [ngClass]="{'fa-plus':!swarmCardBody,'fa-minus':swarmCardBody}"></i>
+                </div>
+                <div class="card-body" *ngIf="swarmCardBody">
+                  <form>
+                    <div class="form-group row">
+                      <label for="rateSwarm" class="col-form-label col-12 col-sm-12 col-md-6 col-lg-4 col-xl-4">Average bee swarm rate (%):</label>
+                      <div class="col">
+                        <input type="number" class="form-control" id="rateSwarm" placeholder="%" name="rateSwarm" [(ngModel)]="rateSwarm" />
+                      </div>
+                    </div>
+                    <div class="form-group row">
+                      <label for="pSwarm" class="col-form-label col-12 col-sm-12 col-md-6 col-lg-4 col-xl-4">Swarm value (EUR):</label>
+                      <div class="col">
+                        <input type="number" class="form-control" id="pSwarm" placeholder="EUR" name="pSwarm" [(ngModel)]="pSwarm" />
+                      </div>
+                    </div>
+                  </form>
+                </div>
+                <div class="card-footer bg-white border-dark" *ngIf="swarmCardBody">
+                  <div class="form-group row">
+                    <label for="expensesSwarming" class="col-form-label col-12 col-sm-12 col-md-6 col-lg-4 col-xl-4"><i><b>Swarming expenses (EUR):</b></i></label>
+                    <div class="col">
+                      <input type="text" readonly class="form-control" name="expensesSwarming" [value]="calcSwarmExpenses(rateSwarm) | number:'.2-2'" />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="card-footer bg-white border-danger">
+              <div class="form-group row">
+                <label for="expensesTotal" class="col-form-label col-12 col-sm-12 col-md-6 col-lg-4 col-xl-4 text-danger"><i><b>Total expenses (EUR):</b></i></label>
+                <div class="col">
+                  <input type="text" readonly class="form-control" name="expensesTotal" [value]="calcTotalExpenses(false) | number:'.2-2'" />
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="card border-success mb-3">
+            <div class="card-header bg-white">
+              <div class="form-group row">
+                <label for="profit" class="col-form-label col-12 col-sm-12 col-md-6 col-lg-4 col-xl-4 text-success"><i><b>Profit (EUR):</b></i></label>
+                <div class="col">
+                  <input type="text" readonly class="form-control" name="profit" [value]="calcProfit(false, 0) | number:'.2-2'" />
+                </div>
+              </div>
+            </div>
+          </div>
+        </ng-template>
+      </ngb-tab>
+      <ngb-tab id="tab-2">
+        <ng-template ngbTabTitle>
+            <span [ngClass]="activeTab == 'tab-2' ? 'my-tab-active' : 'my-tab-non-active'">Measurement systems</span>
+        </ng-template>
+        <ng-template ngbTabContent>
+          <table class="table mb-3 mt-3">
+            <thead>
+              <tr>
+                <td class="border-top-0"></td>
+                <th class="border-top-0" scope="col">Without IT system</th>
+                <th class="border-top-0" scope="col">All hives with measuring system</th>
+                <th class="border-top-0" scope="col">One hive with system</th>
+                <th class="border-top-0" scope="col">Apiary with custom config</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <th scope="row">Production per hive</th>
+                <td align="center">{{prodPerColony | number:'.2-2'}}</td>
+                <td align="center">{{getAllHivesWithSysProd() | number:'.2-2'}}</td>
+                <td align="center">{{getOneHiveWithSysProd() | number:'.2-2'}}</td>
+                <td align="center">{{getCustomSysProd() | number:'.2-2'}}</td>
+              </tr>
+              <tr>
+                <th scope="row">Basic income</th>
+                <td align="center">{{calcBasicIncome(prodPerColony) | number:'.2-2'}}</td>
+                <td align="center">{{calcBasicIncome(getAllHivesWithSysProd()) | number:'.2-2'}}</td>
+                <td align="center">{{calcBasicIncome(getOneHiveWithSysProd()) | number:'.2-2'}}</td>
+                <td align="center">{{calcBasicIncome(getCustomSysProd()) | number:'.2-2'}}</td>
+              </tr>
+              <tr>
+                <td class="table-secondary" colspan="5" align="center"><b>Expenses</b></td>
+              </tr>
+              <tr>
+                <th scope="row">Number of inspections</th>
+                <td align="center">{{numOfInspections}}</td>
+                <td align="center">{{inspectionsWithSystem}}</td>
+                <td align="center">{{numOfInspections}}</td>
+                <td align="center">{{inspectionsWithSystem}}</td>
+              </tr>
+              <tr>
+                <th scope="row">EXP<sub>inspections</sub></th>
+                <td align="center">{{calcInspectionExpYear(numOfInspections) | number:'.2-2'}}</td>
+                <td align="center">{{calcInspectionExpYear(inspectionsWithSystem) | number:'.2-2'}}</td>
+                <td align="center">{{calcInspectionExpYear(numOfInspections) | number:'.2-2'}}</td>
+                <td align="center">{{calcInspectionExpYear(inspectionsWithSystem) | number:'.2-2'}}</td>
+              </tr>
+              <tr>
+                <th scope="row">Number of dead colonies</th>
+                <td align="center">{{getNumOfDeadCol(0)}}</td>
+                <td align="center">{{getNumOfDeadCol(deathRedSysRate)}}</td>
+                <td align="center">{{getNumOfDeadCol(0)}}</td>
+                <td align="center">{{getNumOfDeadCol(deathRedSysRate)}}</td>
+              </tr>
+              <tr>
+                <th scope="row">EXP<sub>dead</sub></th>
+                <td align="center">{{calcDeathExpenses() | number:'.2-2'}}</td>
+                <td align="center">{{calcDeathExpAdvanced() | number:'.2-2'}}</td>
+                <td align="center">{{calcDeathExpenses() | number:'.2-2'}}</td>
+                <td align="center">{{calcDeathExpAdvanced() | number:'.2-2'}}</td>
+              </tr>
+              <tr>
+                <th scope="row">Number of swarmings</th>
+                <td align="center">{{getNumOfSwarmingCol(rateSwarm)}}</td>
+                <td align="center">{{getNumOfSwarmingCol(0)}}</td>
+                <td align="center">{{getNumOfSwarmingCol(rateSwarm)}}</td>
+                <td align="center">{{getNumOfSwarmingCol(0)}}</td>
+              </tr>
+              <tr>
+                <th scope="row">EXP<sub>swarming</sub></th>
+                <td align="center">{{calcSwarmExpenses(rateSwarm) | number:'.2-2'}}</td>
+                <td align="center">{{calcSwarmExpenses(0) | number:'.2-2'}}</td>
+                <td align="center">{{calcSwarmExpenses(rateSwarm) | number:'.2-2'}}</td>
+                <td align="center">{{calcSwarmExpenses(0) | number:'.2-2'}}</td>
+              </tr>
+              <tr>
+                <th scope="row">EXP<sub>total</sub></th>
+                <td align="center">{{calcTotalExpenses(false) | number:'.2-2'}}</td>
+                <td align="center">{{calcTotalExpenses(true) | number:'.2-2'}}</td>
+                <td align="center">{{calcTotalExpenses(false) | number:'.2-2'}}</td>
+                <td align="center">{{calcTotalExpenses(true) | number:'.2-2'}}</td>
+              </tr>
+              <tr>
+                <td class="table-secondary" colspan="5" align="center"><b>Profit and system installation costs</b></td>
+              </tr>
+              <tr>
+                <th scope="row">Profit</th>
+                <td align="center">{{calcProfit(false, 0) | number:'.2-2'}}</td>
+                <td align="center">{{calcProfit(true, 1) | number:'.2-2'}}</td>
+                <td align="center">{{calcProfit(false, 2) | number:'.2-2'}}</td>
+                <td align="center">{{calcProfit(true, 3) | number:'.2-2'}}</td>
+              </tr>
+              <tr>
+                <th scope="row">System installation costs</th>
+                <td align="center">---</td>
+                <td align="center">{{calcInstallCostsForAll() | number:'.2-2'}}</td>
+                <td align="center">{{cheapestMonSys | number:'.2-2'}}</td>
+                <td align="center">{{calcInstallCostsForCustomConfig() | number:'.2-2'}}</td>
+              </tr>
+            </tbody>
+          </table>
+        </ng-template>
+      </ngb-tab>
+    </ngb-tabset>
+
+  </div>
+</div>

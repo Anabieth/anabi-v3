@@ -1,0 +1,92 @@
+/* You can add global styles to this file, and also import other style files */
+input.ng-dirty {
+  border-left: 5px solid #d2a54e;
+}
+
+input.ng-invalid.ng-dirty {
+  border-left: 5px solid #a94442;
+}
+
+.checkbox>input[type="checkbox"] {
+  display: none;
+}
+
+.checkbox>label {
+  display: block;
+  height: 24px;
+  cursor: pointer;
+  position: relative;
+  margin: 0;
+}
+
+.checkbox>label:before {
+  content: "";
+  display: block;
+  background: #95a0ab;
+  border-radius: 5rem;
+  width: 36px;
+  height: 12px;
+  position: relative;
+  left: 6px;
+  top: 6px;
+  box-shadow: inset 1px 3px 8px rgba(0, 0, 0, 0.15);
+}
+
+.checkbox>input[type="checkbox"]:checked+label:before {
+  background: #5dc74d;
+}
+
+.checkbox>label>span {
+  display: block;
+  width: 24px;
+  height: 24px;
+  border-radius: 12rem;
+  background: white;
+  box-shadow: -1px 3px 8px rgba(154, 153, 153, 0.5);
+  position: absolute;
+  top: 0;
+  left: 0;
+  transition: all 0.2s ease;
+}
+
+.checkbox>input[type="checkbox"]:checked+label>span {
+  transform: translateX(24px);
+  background: #397b49;
+}
+
+/* Ugly hack as ngbTypeahead is not supporting direct styling */
+ngb-typeahead-window {
+    max-height: 25rem;
+    overflow-y: auto;
+}
+
+ngb-typeahead-window > .dropdown-item.active {
+  background-color: #6c757d !important;
+}
+
+ngb-typeahead-window > .dropdown-item.active > .text-muted {
+  color: white !important;
+}
+/*End of ugly hack*/
+
+
+.btn-table {
+  margin-bottom: -1rem;
+  margin-top: -1rem;
+}
+
+.cursor-pointer {
+  cursor: pointer;
+}
+
+@media (max-width: 575.98px) {
+  .modal-dialog {
+    margin: 0;
+    max-width: none;
+  }
+
+  .modal-content {
+    border: 0;
+    border-radius: 0;
+  }
+}

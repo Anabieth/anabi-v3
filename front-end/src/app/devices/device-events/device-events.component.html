@@ -1,0 +1,96 @@
+<div class="row">
+  <div class="col">
+    <nav>
+      <ul class="breadcrumb">
+        <li class="breadcrumb-item"><a routerLink="/devices">All devices</a></li>
+        <li class="breadcrumb-item active">{{device?.name}}</li>
+      </ul>
+    </nav>
+
+  </div>
+</div>
+
+<h1>{{device?.name}}
+  <small class="text-muted">/events/</small>
+  <button class="btn btn-outline-primary float-right" (click)="ngOnInit()"><i class="fa fa-sync-alt"></i> Refresh
+  </button>
+</h1>
+
+<ngb-tabset justify="justified" [activeId]="activeTab" (tabChange)="onTabChange($event)">
+
+  <ngb-tab title="Device logs" id="logs">
+    <ng-template ngbTabContent>
+      <table class="table table-hover">
+        <thead>
+        <tr>
+          <th scope="col">Date</th>
+          <th scope="col">Level</th>
+          <th scope="col">Message</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr *ngFor="let log of device?.logs" [ngClass]="getLogRowClass(log.level)">
+          <td title="{{log.ts | dateTime}}">{{log.ts | timeAgo:'withTime'}}</td>
+          <td>{{log.level}}</td>
+          <td>{{log.message}}</td>
+        </tr>
+        </tbody>
+      </table>
+    </ng-template>
+  </ngb-tab>
+
+  <ngb-tab title="All events" id="all">
+    <ng-template ngbTabContent>
+      <table class="table table-hover">
+        <thead>
+        <tr>
+          <th scope="col">Date</th>
+          <th scope="col">Source ID</th>
+          <th scope="col">Result</th>
+          <th scope="col">Type</th>
+          <th scope="col">Node</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr *ngFor="let event of device?.events">
+          <td title="{{event.ts | dateTime}}">{{event.ts | timeAgo:'withTime'}}</td>
+          <td>{{event.sourceId}}</td>
+          <td>
+              <span [ngClass]="getResultTextClass(event.result)">
+                <i class="fa" [ngClass]="getResultIconClass(event.result)"></i> {{event.result}}
+              </span>
+          </td>
+          <td>{{event.type}}</td>
+          <td><a [routerLink]="['/nodes', event.nodeId]">{{event.nodeName || event.nodeId}}</a></td>
+        </tr>
+        </tbody>
+      </table>
+    </ng-template>
+  </ngb-tab>
+
+  <ngb-tab title="Errors" id="errors">
+    <ng-template ngbTabContent>
+      <table class="table table-hover">
+        <thead>
+        <tr>
+          <th scope="col">Date</th>
+          <th scope="col">Source ID</th>
+          <th scope="col">Result</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr *ngFor="let event of device?.errors">
+          <td title="{{event.ts | dateTime}}">{{event.ts | timeAgo:'withTime'}}</td>
+          <td>{{event.sourceId}}</td>
+          <td><span [ngClass]="getResultTextClass(event.result)">
+                <i class="fa" [ngClass]="getResultIconClass(event.result)"></i> {{event.result}}
+              </span>
+          </td>
+
+        </tr>
+        </tbody>
+      </table>
+    </ng-template>
+  </ngb-tab>
+
+</ngb-tabset>

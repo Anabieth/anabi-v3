@@ -1,0 +1,90 @@
+<div class="row">
+  <div class="col">
+    <nav>
+      <ul class="breadcrumb">
+        <li class="breadcrumb-item"><a routerLink="/models">All models</a></li>
+      </ul>
+    </nav>
+  </div>
+</div>
+<h1 *ngIf="isNew">
+  New model definition
+</h1>
+
+<h1 *ngIf="!isNew">
+  {{selectedModel.name}}
+</h1>
+
+<form>
+  <div class="row">
+    <div class="col" [formGroup]="modelForm">
+
+      <div class="form-group row" *ngIf="isNew">
+        <label class="col-lg-3 col-form-label" for="modelCode">Model template</label>
+        <div class="col-lg-9">
+          <select class="form-control" id="modelCode" formControlName="modelCode">
+            <option *ngFor="let model of models" [value]="model.code">{{model.name}}</option>
+          </select>
+        </div>
+      </div>
+
+      <div *ngIf="selectedModel">
+        <div class="form-group border-top pt-3">
+          {{selectedModel.description}}
+        </div>
+
+        <div *ngFor="let param of selectedModel.params" class="form-group row">
+          <label class="col-lg-3 col-form-label" [for]="'p-' + param.code"
+                 [class.font-weight-bold]="param.master">{{param.name}}</label>
+          <div class="col-lg-9" [ngSwitch]="param.type" [formGroup]="modelForm.get('params')">
+            <app-node-select *ngSwitchCase="'nodeId'" [id]="'p-' + param.code" [nodes]="nodes"
+                             [value]="getParamNode(param.code)" (nodeSelected)="paramNodeSelected(param.code, $event)">
+            </app-node-select>
+
+            <input *ngSwitchCase="'number'" [id]="'p-' + param.code" type="number" class="form-control"
+                   [formControlName]="param.code"/>
+            <small class="form-text text-muted">{{param.description}}</small>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group text-danger" *ngIf="saveError">
+        <strong>{{saveError?.error}}:</strong> {{saveError?.message}}
+      </div>
+    </div>
+  </div>
+</form>
+
+<ng-template #confirmDialog let-modal>
+  <div class="modal-header">
+    <h5 class="modal-title">Confirm delete</h5>
+    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss()">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <p>
+      Are you sure want to delete model definition?
+    </p>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-outline-danger" (click)=modal.close()>Yes, delete it!</button>
+    <button type="button" class="btn btn-outline-secondary" (click)=modal.dismiss() ngbAutofocus>No, keep it.</button>
+  </div>
+</ng-template>
+
+<div class="row">
+  <div class="col">
+    <button class="btn btn-outline-primary mr-2" (click)="saveClicked()" [disabled]="modelForm.invalid">
+      <i class="fa fa-check"></i> Save
+    </button>
+    <button class="btn btn-outline-secondary mr-2" (click)="cancelClicked()"><i class="fa fa-times"></i> Cancel</button>
+  </div>
+
+  <div class="col">
+    <button *ngIf="!isNew" type="button" class="btn btn-outline-danger float-right"
+            (click)="deleteClicked(confirmDialog)">
+      <i class="fa fa-trash"></i> Delete
+    </button>
+  </div>
+</div>

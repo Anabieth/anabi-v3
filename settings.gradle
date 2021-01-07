@@ -1,0 +1,3 @@
+rootProject.name = 'bees-dwh'
+include 'web-api'
+include 'front-end'

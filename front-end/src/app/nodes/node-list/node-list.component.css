@@ -1,0 +1,27 @@
+.card ~ .card {
+  margin-top: 1.25rem;
+}
+
+.card-header {
+  cursor: pointer;
+}
+
+.card-header:last-child {
+  border: 0;
+}
+
+.card-header > .buttons {
+  opacity: 0.2;
+  margin-bottom: -6px;
+  margin-right: -11px;
+  margin-top: -4px;
+}
+
+.card-header:hover > .buttons {
+  opacity: 1;
+}
+
+.sidebar {
+  position: sticky;
+  top: 72px;
+}

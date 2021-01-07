@@ -1,0 +1,44 @@
+<h1>
+  User devices
+</h1>
+
+<table class="table table-striped table-hover">
+  <thead>
+  <tr>
+    <th scope="col">Name</th>
+    <th scope="col">Location</th>
+    <th scope="col">Client ID</th>
+    <th scope="col">Is Active</th>
+    <th scope="col">Last log</th>
+    <th scope="col">Last event</th>
+    <th scope="col">Last error</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr *ngIf="devices?.length == 0">
+    <td colspan="6">
+      No devices found! Register <a routerLink="/nodes">a node</a> with corresponding type.
+    </td>
+  </tr>
+  <tr *ngFor="let dev of devices">
+    <td><a [routerLink]="['/nodes', dev.id]">{{dev.name}}</a></td>
+    <td>{{dev.location}}</td>
+    <td class="text-truncate" style="max-width: 12rem;"><span [title]="dev.clientId">{{dev.clientId}}</span></td>
+    <td>
+      <div class="checkbox">
+        <input type="checkbox" [id]="'cbx'+dev.id" [checked]="dev.isActive" (change)="toggleIsActive(dev)"/>
+        <label [for]="'cbx'+dev.id"><span></span></label>
+      </div>
+    </td>
+    <td><a *ngIf="dev.lastLog; let last" [routerLink]="[dev.id, 'events']" fragment="logs"
+           title="{{last.ts | dateTime}} {{last.message}}">{{last.ts | timeAgo}}</a>
+    </td>
+    <td><a *ngIf="dev.lastEvent; let last" [routerLink]="[dev.id, 'events']" fragment="all"
+           title="{{last.ts | dateTime}} {{last.result}}">{{last.ts | timeAgo}}</a>
+    </td>
+    <td><a *ngIf="dev.lastError; let last" [routerLink]="[dev.id, 'events']" fragment="errors"
+           title="{{last.ts | dateTime}} {{last.result}}">{{last.ts | timeAgo}}</a>
+    </td>
+  </tr>
+  </tbody>
+</table>

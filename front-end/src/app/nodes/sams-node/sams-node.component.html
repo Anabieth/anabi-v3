@@ -1,0 +1,102 @@
+<div class="row">
+  <div class="col">
+    <nav>
+      <ul class="breadcrumb">
+        <li class="breadcrumb-item"><a routerLink="/nodes">All nodes</a></li>
+        <!-- <li class="breadcrumb-item active">Register SAMS device</li> -->
+      </ul>
+    </nav>
+
+  </div>
+</div>
+
+<h1>Register SAMS hive</h1>
+
+<form>
+  <div class="row">
+    <div class="col-md-4" [formGroup]="samsForm">
+      <div class="form-group">
+        <label for="baseName">Name</label>
+        <input type="text" class="form-control" id="baseName" formControlName="baseName"
+               placeholder="Base name for registered nodes" required/>
+      </div>
+      <div class="form-group">
+        <label for="clientId">Client ID</label>
+        <input type="text" class="form-control" id="clientId" formControlName="clientId"
+               placeholder="Client ID for the device and mappings" required/>
+      </div>
+      <div class="form-group">
+        <label for="location">Location</label>
+        <input type="text" class="form-control" id="location" formControlName="location"
+               placeholder="Location of hive"/>
+      </div>
+      <div class="form-group">
+        <label for="root">Parent node</label>
+        <select class="form-control" id="root" formControlName="root">
+          <option *ngFor="let node of existingNodes" [value]="node.id">{{node.name}}</option>
+        </select>
+      </div>
+      <button type="submit" class="btn btn-outline-primary mr-2" (click)="registerClicked()"
+              [disabled]="samsForm.invalid">
+        <i class="fa fa-check"></i> Register
+      </button>
+      <button type="button" class="btn btn-outline-secondary mr-2" (click)="cancelClicked()">
+        <i class="fa fa-times"></i> Cancel
+      </button>
+    </div>
+
+    <div class="col-md-8">
+
+      <div class="alert alert-danger mt-3" *ngIf="resultErorr">
+        <h5 class="alert-heading">Failed to create node structure!</h5>
+        <ul class="mb-0">
+          <li>{{resultErorr.status}} {{resultErorr.error}}: {{resultErorr.message}}</li>
+          <li>{{resultErorr.path}}</li>
+        </ul>
+      </div>
+
+      <p class="mb-2">Node structure and source mapping preview</p>
+
+      <ng-template #nodeCardHeader let-node>
+        <div class="card-header">
+          <i class="fa" [ngClass]="getIcon(node.type)"></i> {{node.name}}
+          <table class="table table-sm mt-3 mb-0">
+            <tr *ngFor="let param of node.params | keyvalue">
+              <td>
+                <i class="fa" [ngClass]="getStatusIcon(param.value.status)"></i>
+                {{param.key}}
+              </td>
+              <td>
+                {{param.value.sourceId}}
+              </td>
+            </tr>
+          </table>
+        </div>
+      </ng-template>
+
+      <div class="card">
+        <div class="card-header">
+          <i class="fa" [ngClass]="getIcon(root.type)"></i> {{root.name}}
+        </div>
+        <div class="card-body">
+          <div class="card">
+            <ng-container *ngTemplateOutlet="nodeCardHeader; context:{ $implicit: hive }"></ng-container>
+
+            <div class="card-body">
+              <div class="card">
+                <ng-container *ngTemplateOutlet="nodeCardHeader; context:{ $implicit: device }"></ng-container>
+              </div>
+
+              <div class="card">
+                <ng-container *ngTemplateOutlet="nodeCardHeader; context:{ $implicit: outside }"></ng-container>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+
+</form>

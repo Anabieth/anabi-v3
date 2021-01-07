@@ -1,0 +1,7 @@
+{
+  "/api/*": {
+    "target": "https://sams.science.itf.llu.lv/",
+    "changeOrigin": true,
+    "logLevel": "debug"
+  }
+}

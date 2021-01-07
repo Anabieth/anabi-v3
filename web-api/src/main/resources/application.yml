@@ -1,0 +1,57 @@
+spring:
+  data.mongodb:
+    uri: mongodb://localhost:27017/bees
+    auto-index-creation: true
+  jackson:
+    serialization.write_dates_as_timestamps: false
+    default-property-inclusion: NON_EMPTY
+  http:
+    multipart:
+      max-file-size: 15MB
+      max-request-size: 15MB
+
+  cache.caffeine.spec: expireAfterWrite=30m
+
+sams:
+  token:
+    local-issuer: https://sams.local/
+    remote-issuer: https://sams-project.eu.auth0.com/
+    audience: sams-dwh-web-api
+    expireIn: 86400
+  dwh:
+    address: http://localhost:8081/
+
+AUTH0_CLIENT: client
+AUTH0_SECRET: secret
+
+---
+spring:
+  profiles: debug-logs
+logging.level:
+  org.springframework.data.mongodb.core.MongoTemplate: DEBUG
+#  lv.llu.science.bees.webapi.dwh.DwhClient: DEBUG
+#  lv.llu.science.bees.webapi.domain.auth0.Auth0Client: DEBUG
+
+---
+spring:
+  profiles: embedded
+  data.mongodb.port: 0
+  mongodb.embedded.version: 4.0.2
+logging.level:
+  org.springframework.data.mongodb.core.MongoTemplate: DEBUG
+
+---
+spring:
+  profiles: mockDwh
+sams:
+  dwh:
+    address: http://localhost:8765/
+
+---
+spring:
+  profiles: prod
+  data.mongodb.uri: mongodb://mongo/bees
+
+sams:
+  dwh:
+    address: http://dwh-core:8080/

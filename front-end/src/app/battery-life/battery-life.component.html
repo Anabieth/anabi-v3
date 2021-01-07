@@ -1,0 +1,76 @@
+<h2 align="center" class="p-2">
+  Bee colony monitoring system's battery life calculator
+</h2>
+<p class="text-muted text-justify">This calculator allows to estimate battery life depending on different monitoring system's operation states.</p>
+<hr>
+<form [formGroup]="myForm">
+  <div class="card card-block m-2 border-info">
+    <div class="card-body">
+      <p class="card-text" *ngIf="myForm.valid">Battery with selected parameters will last for about <b> {{ batLifeInHours | number:'.3-3'}} hours</b> or <b>{{(batLifeInHours / 24) | number:'.3-3'}} days</b>.
+        <br><small class="text-muted font-italic">This is an estimate and may vary in real life depending on several factors (e.g., temperature).</small></p>
+    </div>
+  </div>
+  <h5 class="text-muted">
+    Battery information
+  </h5>
+  <div class="input-group">
+    <div class="input-group p-2 col-12 col-sm-12 col-md-6 col-lg-6 col-xl-6">
+      <div class="input-group-prepend">
+        <span class="input-group-text">Capacity</span>
+      </div>
+      <input type="number" class="form-control" placeholder="Capacity in mAh" formControlName="batCapacity">
+      <div class="input-group-append mr-2">
+        <span class="input-group-text">mAh</span>
+      </div>
+    </div>
+    <div class="input-group p-2 col-12 col-sm-12 col-md-6 col-lg-6 col-xl-6">
+      <div class="input-group-prepend" data-toggle="tooltip" data-placement="top" title="The % of how much to discharge the battery">
+        <span class="input-group-text">Discharge capacity</span>
+      </div>
+      <input type="number" class="form-control" placeholder="Discharge safety %" formControlName="dischrgSafety">
+      <div class="input-group-append mr-2">
+        <span class="input-group-text">%</span>
+      </div>
+    </div>
+    <div class="text-muted" *ngIf="myForm.valid"><i>Calculation for battery capacity <b>{{myForm.value.batCapacity * (myForm.value.dischrgSafety / 100)}}mAh</b></i></div>
+  </div>
+  <div class="alert alert-danger alert-dismissible fade show" role="alert" *ngIf="(batCapacity.errors?.min && batCapacity.dirty) || (dischrgSafety.errors?.min && dischrgSafety.dirty)">
+    Non-negative numbers required!
+  </div>
+  <div class="alert alert-danger alert-dismissible fade show" role="alert" *ngIf="(dischrgSafety.errors?.max && dischrgSafety.dirty)">
+    Maximum discharge capacity must be 100%!
+  </div>
+  <hr>
+  <h5 class="text-muted">
+    System operation states
+  </h5>
+  <div formArrayName="powerStates">
+    <div *ngFor="let powerState of powerStateForms.controls; let i=index" [formGroupName]="i">
+      <div class="input-group">
+        <div class="input-group p-1 col-12 col-sm-12 col-md-4 col-lg-4 col-xl-4">
+          <input type="text" class="form-control mr-2 font-weight-bold" placeholder="Power state name" formControlName="label">
+        </div>
+        <div class="input-group p-1 col-12 col-sm-12 col-md-4 col-lg-4 col-xl-4">
+          <input type="number" class="form-control" placeholder="State duration in seconds" formControlName="duration">
+          <div class="input-group-append pr-1">
+            <select class="custom-select" formControlName="timeUnit">
+              <option *ngFor="let timeUnit of timeUnits" [value]="timeUnit">{{timeUnit}}</option>
+            </select>
+          </div>
+        </div>
+        <div class="input-group p-1 col-12 col-sm-12 col-md-4 col-lg-4 col-xl-4">
+          <input type="number" class="form-control" placeholder="Current" formControlName="power">
+          <div class="input-group-append pr-1">
+            <select class="custom-select" formControlName="powerUnit">
+              <option *ngFor="let powerUnit of powerUnits" [value]="powerUnit">{{powerUnit}}</option>
+            </select>
+          </div>
+          <button class="btn btn-outline-danger" (click)="deletePowerState(i)"><i class="fas fa-trash-alt"></i></button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <button class="btn btn-secondary m-2" (click)="addPowerState()">Add state</button>
+  <button class="btn btn-outline-secondary" (click)="initDefault()">Reload default</button>
+  <hr>
+</form>

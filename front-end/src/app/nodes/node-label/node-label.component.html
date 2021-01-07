@@ -1,0 +1,5 @@
+<span>
+  <i class="fa" [ngClass]="getIcon(node?.type)"></i>
+  {{node?.name}}
+  <small *ngIf="showLocation">{{node?.location}}</small>
+</span>

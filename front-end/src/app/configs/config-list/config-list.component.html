@@ -1,0 +1,38 @@
+<h1>
+  Device configs
+
+  <a routerLink="new" class="btn btn-outline-primary mt-2 mr-1 float-right">
+    <i class="fa fa-plus"></i> Add config
+  </a>
+</h1>
+
+<table class="table table-striped table-hover">
+  <thead>
+  <tr>
+    <th scope="col">Name</th>
+    <th scope="col">Changed time</th>
+    <th scope="col">Changed by</th>
+    <th scope="col">Devices</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr *ngIf="!configs || configs.length == 0">
+    <td colspan="4">No configs found!</td>
+  </tr>
+  <tr *ngFor="let config of configs">
+    <td class="text-nowrap">
+      <button type="button" class="btn btn-sm btn-link pt-0 pb-0 border-0" (click)="defaultClicked(config)"
+              title="Set as default config">
+        <i class="fa-star" [ngClass]="config.isDefault ? 'fas' : 'far'"></i>
+      </button>
+
+      <a [routerLink]="['/configs', config.id]">{{config.name}}</a>
+    </td>
+    <td class="text-nowrap">{{config.changedTs | timeAgo}}</td>
+    <td class="text-nowrap">{{config.changedBy}}</td>
+    <td>
+      <a *ngFor="let dev of config.devices" [routerLink]="['/nodes', dev.id]" class="pr-1">{{dev.name}}</a>
+    </td>
+  </tr>
+  </tbody>
+</table>

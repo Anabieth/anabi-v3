@@ -1,0 +1,124 @@
+<h1>
+  User node hierarchy
+</h1>
+
+<div class="row mb-2 ml-2">
+  <button (click)="newChildClicked(null)" class="btn btn-outline-secondary mt-2 mr-2">
+    <i class="fa fa-plus"></i> Add root node
+  </button>
+
+  <a routerLink="sams" class="btn btn-outline-primary mt-2 mr-1 float-right">
+    <i class="fa fa-plus"></i> Register SAMS hive
+  </a>
+</div>
+
+<div class="row">
+  <div class="col-12 col-lg-8">
+    <ng-template #recursiveCard let-list>
+      <div *ngFor="let node of list" class="card" [class.border-secondary]="node.id === currentNode?.id">
+        <div class="card-header pl-3 pr-1" (click)="editClicked(node)">
+          <i *ngIf="node.children?.length > 0" class="fas mr-2" (click)="node.notCollapsed = !node.notCollapsed; $event.stopPropagation()" [ngClass]="{'fa-chevron-down':!node.notCollapsed,'fa-chevron-up':node.notCollapsed}"></i>
+          <app-node-label [node]="node" [showLocation]="true"></app-node-label>
+          <div class="btn-group float-right col-12 col-sm-auto mt-sm-0 mt-1">
+            <a class="btn btn-sm btn-outline-primary" [routerLink]="node.id">
+              <i class="fa fa-search"></i> Details
+            </a>
+            <div class="btn-group" ngbDropdown placement="bottom-right" role="group" aria-label="Button group with nested dropdown">
+              <button type="button" class="btn btn-sm btn-outline-primary dropdown-toggle-split" (click)="$event.stopPropagation()" ngbDropdownToggle></button>
+              <div class="dropdown-menu" ngbDropdownMenu>
+                <button ngbDropdownItem class="btn btn-sm btn-outline-info mr-1" (click)="openReport(node.id)">
+                  <i class="fa fa-search"></i> Reports
+                </button>
+                <button ngbDropdownItem class="btn btn-sm btn-outline-success" (click)="newChildClicked(node); $event.stopPropagation();">
+                  <i class="fa fa-plus"></i> Add child
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div *ngIf="node.children?.length > 0 && node.notCollapsed" class="card-body">
+          <ng-container *ngTemplateOutlet="recursiveCard; context:{ $implicit: node.children }"></ng-container>
+        </div>
+
+      </div>
+    </ng-template>
+
+    <div class="card" *ngIf="nodes.length === 0">
+      <div class="card-body">
+        No nodes defined, yet.
+      </div>
+    </div>
+
+    <ng-container *ngTemplateOutlet="recursiveCard; context:{ $implicit: nodes }"> </ng-container>
+  </div>
+
+  <div class="col-12 col-lg-4 mt-lg-0 mt-4">
+    <div class="sidebar">
+
+      <div class="card" *ngIf="currentNode">
+        <div class="card-header">
+          Node details
+          <i class="fas fa-times float-right" (click)="currentNode=null"></i>
+        </div>
+        <div class="card-body">
+          <div class="form-group">
+            <label for="nodeId">ID</label>
+            <input type="text" readonly class="form-control" name="nodeId" [value]="currentNode.id || 'New node'" />
+          </div>
+
+          <div class="form-group">
+            <label for="nodeName">Name</label>
+            <input type="text" class="form-control" name="nodeName" [(ngModel)]="currentNode.name" />
+          </div>
+
+          <div class="form-group">
+            <label for="nodeType">Type</label>
+            <select class="form-control" name="nodeType" [(ngModel)]="currentNode.type">
+              <option [ngValue]="type.value" *ngFor="let type of nodeTypes">{{type.title}}</option>
+            </select>
+          </div>
+          <a class="btn btn-outline-primary mr-1" [routerLink]="currentNode.id">
+            <i class="fa fa-search"></i> Details and mapping
+          </a>
+          <button class="btn btn-outline-info mt-1" (click)="openReportList(currentNode.id)">
+            <i class="fa fa-search"></i> Reports
+          </button>
+
+        </div>
+        <div class="card-footer pl-sm-3 pr-sm-3 pl-1 pr-1">
+          <button class="btn btn-outline-success mr-sm-2 mr-1 mt-1" (click)="saveClicked()"><i class="fa fa-check"></i> Save</button>
+          <button class="btn btn-outline-secondary mr-sm-2 mr-1 mt-1" (click)="cancelClicked()"><i class="fa fa-times"></i> Cancel</button>
+          <button *ngIf="currentNode.id" class="btn btn-outline-danger float-right mt-1" (click)="deleteClicked()"><i class="fa fa-trash"></i>
+            Delete
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<ng-template #confirmDelete let-c="close" let-d="dismiss">
+  <div class="modal-header">
+    <h5 class="modal-title">Confirm delete</h5>
+    <button type="button" class="close" aria-label="Close" (click)="d()">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <p>Node deletion is <strong>not</strong> reversible. This operation will delete:</p>
+    <ul>
+      <li>metadata about <strong>this</strong> node and its <strong>children</strong> nodes,</li>
+      <li>device <strong>client IDs</strong> and source <strong>mappings</strong>,</li>
+      <li>already <strong>loaded data</strong> (reports) will not be accessible any more.</li>
+    </ul>
+    <p>
+      Are you sure want to delete node {{currentNode.name}}?
+    </p>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-outline-danger" (click)=c()>Yes, delete it anyways!</button>
+    <button type="button" class="btn btn-outline-secondary" (click)=d() ngbAutofocus>No, keep it for now.</button>
+  </div>
+</ng-template>

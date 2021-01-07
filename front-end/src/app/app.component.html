@@ -1,0 +1,84 @@
+<header class="navbar navbar-expand navbar-dark bg-dark">
+  <a class="navbar-brand" routerLink="">
+    <img src="assets/SAMS-DW.svg" class="logo" />
+    SAMS DW
+  </a>
+
+  <ul class="navbar-nav ml-auto">
+    <li class="nav-item" *ngIf="!auth.isAuthenticated">
+      <a class="nav-link" (click)="auth.login(); false" href="#"><i class="fa fa-sign-in"></i> Log in</a>
+    </li>
+    <li class="nav-item dropdown" *ngIf="auth.isAuthenticated">
+      <a class="nav-link dropdown-toggle pt-0 pb-0 cursor-pointer" id="userDropdown" role="button"
+        (click)="isUserDropdownOpen = !isUserDropdownOpen" aria-haspopup="true" aria-expanded="false">
+        <img *ngIf="auth.userProfile?.picture" src="{{auth.userProfile.picture}}" alt="User avatar"
+          class="rounded-circle user-avatar">
+        <i *ngIf="!auth.userProfile?.picture" class="fa fa-user-circle fa-2x align-middle"></i>
+        <span class="align-middle d-none d-md-inline ml-1">{{auth.userProfile?.name || auth.userProfile?.email}}</span>
+      </a>
+      <div [ngbCollapse]="!isUserDropdownOpen" class="dropdown-menu dropdown-menu-right" aria-labelledby="userDropdown">
+        <a class="dropdown-item" href="#" (click)="auth.logout(); false"><i class="fa fa-sign-out"></i> Log out</a>
+      </div>
+    </li>
+  </ul>
+</header>
+
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-12 col-md-3 col-lg-2 bg-light sidebar p-0" id="sidebarMenu">
+      <div class="pl-3 pb-2 pt-2" >
+        <p class="pt-3 pb-2 m-0 font-weight-bold d-inline-block" *ngIf="workspaceService.activeWorkspace$ | async as ws"
+          [ngClass]="ws.isOwner ? 'text-warning' : 'text-info'">
+          <i class="fa" [ngClass]="ws.isOwner ? 'fa-user' : 'fa-share-alt'"></i>
+          {{ws.name}}
+        </p>
+
+        <button class="p-3 btn d-inline-block d-md-none float-right" type="button" (click)="navbarOpen = !navbarOpen"
+          aria-controls="sidebarMenu" [attr.aria-expanded]="navbarOpen" aria-label="Toggle navigation">
+          <span class="text-muted fa fa-lg fa-bars"></span>
+        </button>
+      </div>
+
+      <div class="pl-3 pb-2 border-top d-md-block" [ngClass]="navbarOpen ? 'd-block' : 'd-none'"
+        *ngIf="auth.isAuthenticated">
+        <p class="pt-3 pb-2 m-0 text-muted text-uppercase font-weight-bold">Main</p>
+        <nav class="nav flex-md-column">
+          <a class="nav-link" routerLinkActive="active" routerLink="dashboard">Dashboard</a>
+          <a class="nav-link" routerLinkActive="active" routerLink="nodes">Nodes</a>
+          <a class="nav-link" routerLinkActive="active" routerLink="devices">Devices</a>
+          <a class="nav-link" routerLinkActive="active" routerLink="models">Models</a>
+          <a class="nav-link" routerLinkActive="active" routerLink="report">Reports</a>
+          <a class="nav-link" routerLinkActive="active" routerLink="workspaces">Workspaces</a>
+          <a class="nav-link" routerLinkActive="active" routerLink="configs"
+            *ngIf="auth.userHasScopes(['hw'])">HW&nbsp;Configs</a>
+        </nav>
+      </div>
+      <div class="pl-3 pb-2 border-top d-md-block" [ngClass]="navbarOpen ? 'd-block' : 'd-none'">
+        <p class="pt-3 pb-2 m-0 text-muted text-uppercase font-weight-bold">Calculators</p>
+        <nav class="nav flex-md-column">
+          <a class="nav-link" routerLinkActive="active" routerLink="battery-life">Battery life</a>
+          <a class="nav-link" routerLinkActive="active" routerLink="swarm-economy">Swarm economy</a>
+          <a class="nav-link" routerLinkActive="active" routerLink="system-eval">Monitoring system evaluation</a>
+        </nav>
+      </div>
+      <div class="pl-3 pb-2 border-top d-md-block" [ngClass]="navbarOpen ? 'd-block' : 'd-none'">
+        <p class="pt-3 pb-2 m-0 text-muted text-uppercase font-weight-bold">Knowledge base</p>
+        <nav class="nav flex-md-column">
+          <a class="nav-link" href="https://wiki.sams-project.eu/index.php/Main_Page" target="_blank">
+            <img src="assets/icon.png">
+            SAMSwiki
+            <i class="fa fa-external-link-alt"></i>
+          </a>
+        </nav>
+      </div>
+    </div>
+    <div class="col-12 col-md-9 col-lg-10 pt-3">
+      <main>
+        <router-outlet></router-outlet>
+      </main>
+      <footer class="pl-3 pr-3 mt-5 text-center">
+        <small class="text-muted">ITF &copy; {{year}}</small>
+      </footer>
+    </div>
+  </div>
+</div>

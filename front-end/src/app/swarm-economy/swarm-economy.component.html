@@ -1,0 +1,236 @@
+<h1>
+  Swarm economy
+</h1>
+
+<div class="row">
+  <div class="col-6">
+    <div class="card">
+      <div class="card-header">
+        <span class="">Swarm costs</span>
+      </div>
+      <div class="card-body">
+
+        <div class="card">
+          <div class="card-header">
+            Swarm value
+          </div>
+          <div class="card-body">
+
+            <form class="form-horizontal">
+              <div class="form-group row">
+                <label for="swarmVal" class="col-6 control-label">Swarm value (EUR)</label>
+                <div class="col-6">
+                  <input type="number" [readonly]="enableSingleBeeCalc" class="form-control" name="swarmVal" [(ngModel)]="swarmValue" />
+                </div>
+              </div>
+
+              <div class="input-group mb-3">
+                <label class="container">Calculate per single bee
+                  <input type="checkbox" aria-label="Change swarm calculation method" (change)="enableSingleBeeCalc=!enableSingleBeeCalc" [checked]="enableSingleBeeCalc" />
+                  <span class="checkmark"></span>
+                </label>
+              </div>
+
+              <div class="form-group row">
+                <label for="swarmFraction" class="col-6 control-label">Swarm fraction</label>
+                <div class="col-6">
+                  <input type="number" [readonly]="!enableSingleBeeCalc" class="form-control" name="swarmFraction" [(ngModel)]="swarmFraction" />
+                </div>
+              </div>
+
+              <div class="form-group row">
+                <label for="beeCount" class="col-6 control-label">Total bee count (ct.)</label>
+                <div class="col-6">
+                  <input type="number" [readonly]="!enableSingleBeeCalc" class="form-control" name="beeCount" [(ngModel)]="beeCount" />
+                </div>
+              </div>
+
+              <div class="form-group row">
+                <label for="pricePerBee" class="col-6 control-label">Price per bee (EUR)</label>
+                <div class="col-6">
+                  <input type="number" [readonly]="!enableSingleBeeCalc" class="form-control" name="pricePerBee" [(ngModel)]="pricePerBee" />
+                </div>
+              </div>
+
+              <div class="form-group row">
+                <label for="queenPrice" class="col-6 control-label">Bee queen price (EUR)</label>
+                <div class="col-6">
+                  <input type="number" [readonly]="!enableSingleBeeCalc" class="form-control" name="queenPrice" [(ngModel)]="queenPrice" />
+                </div>
+              </div>
+
+            </form>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            Honey costs
+          </div>
+          <div class="card-body">
+            <form class="form-horizontal">
+              <div class="form-group row">
+                <label for="honeyLost" class="col-6 control-label">Honey lost (kg)</label>
+                <div class="col-6">
+                  <input type="number" class="form-control " name="honeyLost" [(ngModel)]="honeyLost" />
+                </div>
+              </div>
+
+              <div class="form-group row">
+                <label for="honeyPrice" class="col-6 control-label">Honey price (EUR/kg)</label>
+                <div class="col-6">
+                  <input type="number" class="form-control" name="honeyPrice" [(ngModel)]="honeyPrice" />
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+
+      </div>
+      <div class="card-footer">
+        <div class="form-group row">
+          <label for="swarmResult" class="col-6 control-label">Swarm costs (EUR)</label>
+          <div class="col-6">
+            <input type="text" readonly class="form-control" name="swarmResult" [value]="calcTotalSwarmCosts()" />
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <div class="col-6">
+    <div class="card">
+      <div class="card-header">
+        <span class="">Swarm catching costs</span>
+      </div>
+      <div class="card-body">
+
+        <div class="card">
+          <div class="card-header">
+            Travel costs
+          </div>
+          <div class="card-body">
+            <form class="form-horizontal">
+              <div class="form-group row">
+                <label for="distanceOneWay" class="col-6 control-label ">Distance to apiary (<i>one way</i>) (km)</label>
+                <div class="col-2">
+                  <input type="number" placeholder="km" class="form-control " name="distanceOneWay" [(ngModel)]="distanceOneWay" />
+                </div>
+                <label style="font-size:small"><i><b>(Total travel distance: {{calcTotalDistance()}}km)</b></i></label>
+              </div>
+
+              <div class="form-group row">
+                <label for="avgSpeed" class="col-6 control-label">Average speed (km/h)</label>
+                <div class="col-6">
+                  <input type="number" placeholder="km/h" class="form-control" name="avgSpeed" [(ngModel)]="avgSpeed" />
+                </div>
+              </div>
+
+              <div class="form-group row">
+                <label for="timeOnRoad" class="col-6 control-label">Travel time (h):</label>
+                <div class="col-6">
+                  <input type="text" readonly class="form-control" name="timeOnRoad" [value]="calcTimeOnRoad()" />
+                </div>
+              </div>
+
+              <div class="form-group row">
+                <label for="fuelPrice" class="col-6 control-label">Fuel price (EUR/l)</label>
+                <div class="col-6">
+                  <input type="number" [readonly]="enablePerKmCalc" placeholder="EUR/l" class="form-control" name="fuelPrice" [(ngModel)]="fuelPrice" />
+                </div>
+              </div>
+
+              <div class="form-group row">
+                <label for="fuelCons" class="col-6 control-label">Fuel consumption per 100 km (l/100km)</label>
+                <div class="col-6">
+                  <input type="number" [readonly]="enablePerKmCalc" placeholder="l/100km" class="form-control" name="fuelCons" [(ngModel)]="fuelCons" />
+                </div>
+              </div>
+
+              <div class="input-group mb-3">
+                <label class="container">Calculate per km allowance
+                  <input type="checkbox" aria-label="Change travel cost calculation method" (change)="enablePerKmCalc=!enablePerKmCalc" [checked]="enablePerKmCalc" />
+                  <span class="checkmark"></span>
+                </label>
+              </div>
+
+              <div class="form-group row">
+                <label for="kmAllowance" class="col-6 control-label">Km allowance (EUR): </label>
+                <div class="col-6">
+                  <input type="number" [readonly]="!enablePerKmCalc" placeholder="EUR" class="form-control" name="kmAllowance" [(ngModel)]="kmAllowance" />
+                </div>
+              </div>
+
+            </form>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            Person costs
+          </div>
+          <div class="card-body">
+            <form class="form-horizontal">
+              <div class="form-group row">
+                <label for="catchTime" class="col-6 control-label">Swarm catching duration (h):</label>
+                <div class="col-6">
+                  <input type="number" placeholder="Time in hours" class="form-control" name="catchTime" [(ngModel)]="catchTime" />
+                </div>
+              </div>
+
+              <div class="form-group row">
+                <label for="totalTime" class="col-6 control-label">Total time (h)</label>
+                <div class="col-6">
+                  <input type="text" readonly class="form-control" name="totalTime" [value]="calcTotalTime()" />
+                </div>
+              </div>
+
+              <div class="form-group">
+                <span (click)="addPerson()" class="person">
+                  <i class="fas fa-user-plus"></i>
+                  <label for="persons" class="col-6 control-label person">Add person</label>
+                </span>
+                <hr>
+                <div class="form-group">
+                  <span *ngFor="let p of persons;let i=index">
+
+                    <div class="form-group row">
+                      <i class="fas fa-user-minus person" (click)="removePerson(i)"></i>
+                      <label for="hourWage" class=" col-4 control-label">Hourly wage (EUR/h)</label>
+                      <div>
+                        <input type="number" placeholder="Hourly Wage" class="form-control" [name]="'person'+i" [(ngModel)]="persons[i].wage" />
+                      </div>
+                    </div>
+                  </span>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+
+      </div>
+      <div class="card-footer">
+        <div class="form-group row">
+          <label for="totalTravelCosts" class="col-6 control-label">Total travel costs (EUR)</label>
+          <div class="col-6">
+            <input type="text" readonly class="form-control" name="totalTravelCosts" [value]="calcTotalTravelCosts()" />
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="card mt-3">
+  <div class="card-body">
+    <h5><u>Results:</u></h5>
+    <p>
+      Total travel costs to apiary: <i>{{calcTotalTravelCosts() | number:'.2-2'}} EUR</i></p>
+    <p>Total swarm costs: <i>{{calcTotalSwarmCosts() | number:'.2-2'}} EUR</i></p>
+    <p>Potential benefit, if swarm is caught: <i>{{calcBenefitIfSwarmCaught() | number:'.2-2'}} EUR</i></p>
+    <p>Potential benefit, if swarm is caught (advanced economic model): <i>{{calcBenefitWithDistribution()| number:'.2-2'}} EUR</i></p>
+    <p>Potential loss when arriving at the apiary and the swarm was not caught: <i>{{calcLossWhenTravelForNothing() | number:'.2-2'}} EUR</i></p>
+  </div>
+</div>

@@ -1,0 +1,32 @@
+<h1>
+  Model definitions
+
+  <a routerLink="new" class="btn btn-outline-primary float-right">
+    <i class="fa fa-plus"></i> Add new model definition
+  </a>
+</h1>
+
+<div class="row">
+  <div class="col card-columns">
+    <div class="card" *ngFor="let model of models">
+      <div class="card-header">
+        <h4 class="mb-0">{{model.modelName}}</h4>
+      </div>
+
+      <ul class="list-group list-group-flush">
+        <li class="list-group-item" *ngFor="let param of model.paramsLabels">
+          <span class="text-muted" [class.font-weight-bold]="param.master">{{param.label}}: </span>
+          <span *ngIf="!param.node">{{param.value}}</span>
+          <a *ngIf="param.node" [routerLink]="['/nodes', param.node.id]">
+            <app-node-label [node]="param.node" [showLocation]="false"></app-node-label>
+          </a>
+        </li>
+        <li class="list-group-item">
+          <button class="btn btn-sm btn-outline-secondary mr-1" [routerLink]="[model.id]">
+            <i class="fa fa-edit"></i> Edit
+          </button>
+        </li>
+      </ul>
+    </div>
+  </div>
+</div>

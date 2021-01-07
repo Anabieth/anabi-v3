@@ -1,0 +1,36 @@
+def registry = "registry.science.itf.llu.lv"
+
+
+task dockerImage(type: Exec, group: "Docker") {
+    def image = "$registry/$project.ext.dockerImageName"
+
+    doFirst {
+        if (rootProject.version.endsWith('.dirty')) {
+            throw new GradleException("Invalid project version: ${rootProject.version}")
+        }
+    }
+
+    commandLine "docker", "build",
+            "--build-arg", "VER=${rootProject.version}",
+            "-t", "$image:latest",
+            "-t", "$image:${rootProject.version}",
+            "."
+
+    dependsOn(build)
+}
+
+task dockerPush(group: "Docker") {
+    def image = "$registry/$project.ext.dockerImageName"
+
+    doLast {
+        exec {
+            commandLine "docker", "push", "$image:latest"
+        }
+        exec {
+            commandLine "docker", "push", "$image:${rootProject.version}"
+        }
+    }
+    dependsOn(dockerImage)
+}
+
+

@@ -1,0 +1,70 @@
+version: 2
+jobs:
+  build-web-api:
+    working_directory: ~/bees-dwh
+    docker:
+      - image: circleci/openjdk:11-jdk-browsers
+
+    steps:
+      - checkout
+
+      - run: ./gradlew web-api:dependencies -q > deps.txt
+
+      - restore_cache:
+          key: web-api-{{ checksum "deps.txt" }}
+
+      - run: ./gradlew web-api:assemble
+      - run: ./gradlew web-api:test
+      - run: ./gradlew web-api:jacocoTestReport
+
+      - save_cache:
+          paths:
+            - ~/.gradle
+          key: web-api-{{ checksum "deps.txt" }}
+
+      - store_test_results:
+          path: web-api/build/test-results
+
+      - store_artifacts:
+          path: web-api/build/reports/tests/test
+          destination: test
+
+      - store_artifacts:
+          path: web-api/build/reports/jacoco/test/html
+          destination: coverage
+
+  build-front-end:
+    working_directory: ~/bees-dwh/front-end
+    docker:
+      - image: circleci/node:lts-browsers
+
+    steps:
+      - checkout:
+          path: ~/bees-dwh
+      - restore_cache:
+          key: front-end-{{ checksum "package.json" }}
+
+      - run: npm install
+
+      - save_cache:
+          paths:
+            - ./node_modules
+          key: front-end-{{ checksum "package.json" }}
+
+      - run: npm run buildProd
+      - run: npm run testHeadless
+
+      - store_artifacts:
+          path: tests
+          destination: test
+
+      - store_artifacts:
+          path: coverage
+          destination: coverage
+
+workflows:
+  version: 2
+  build-and-test:
+    jobs:
+      - build-web-api
+      - build-front-end

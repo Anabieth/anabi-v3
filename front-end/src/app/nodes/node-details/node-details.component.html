@@ -1,0 +1,120 @@
+<div class="row">
+  <div class="col">
+    <nav>
+      <ul class="breadcrumb">
+        <li class="breadcrumb-item"><a routerLink="/nodes">All nodes</a></li>
+        <li class="breadcrumb-item" *ngFor="let nd of node?.ancestors"><a
+          [routerLink]="['/nodes', nd.id]">{{nd.name}}</a></li>
+        <li class="breadcrumb-item active">{{node?.name}}</li>
+        <li class="breadcrumb-item child-item" *ngFor="let nd of node?.children">
+          <a [routerLink]="['/nodes', nd.id]">{{nd.name}}</a>
+        </li>
+      </ul>
+    </nav>
+
+  </div>
+</div>
+
+<h1>
+  <app-node-label [node]="node"></app-node-label>
+  <small class="text-muted">/{{node?.type | lowercase}}/</small>
+</h1>
+
+<form>
+  <div class="row">
+    <div class="col-md-4" [formGroup]="nodeForm">
+
+      <div class="form-group">
+        <label for="nodeId">ID</label>
+        <input type="text" readonly class="form-control" name="nodeId" [value]="node.id"/>
+      </div>
+
+      <div class="form-group">
+        <label for="nodeName">Name</label>
+        <input type="text" class="form-control" name="nodeName" formControlName="name" required/>
+      </div>
+      <div class="form-group">
+        <label for="nodeLocation">Location</label>
+        <input type="text" class="form-control" name="nodeLocation" formControlName="location"/>
+      </div>
+      <div class="form-group">
+        <label for="nodeType">Type</label>
+        <select class="form-control" name="nodeType" formControlName="type" required>
+          <option [ngValue]="type.value" *ngFor="let type of nodeTypes">{{type.title}}</option>
+        </select>
+      </div>
+      <div class="form-group" *ngIf="isDevice">
+        <label for="nodeClientId">Client ID</label>
+        <div class="input-group mb-3">
+          <div class="input-group-prepend">
+            <div class="input-group-text">
+              <input type="checkbox" formControlName="isActive">
+            </div>
+          </div>
+          <input type="text" class="form-control" name="nodeClientId" formControlName="clientId"/>
+        </div>
+      </div>
+      <div class="form-group" *ngIf="isDevice && hwEngineer">
+        <label for="nodeHwConfig">Hardware config</label>
+        <select class="form-control" name="nodeHwConfig" formControlName="hwConfigId">
+          <option [ngValue]="config.id" *ngFor="let config of hwConfigs">{{config.name}}</option>
+        </select>
+      </div>
+    </div>
+
+
+    <div class="col-md-8" [formGroup]="mappingForm">
+      <div class="form-group" formArrayName="items"
+           *ngFor="let map of mappingItems.controls; first as isFirst; index as i">
+        <label *ngIf="isFirst">Source mapping
+          <small *ngIf="mappingForm.errors?.sourceIdDuplicates" class="form-text text-danger">
+            Duplicate source ID's: {{mappingForm.errors?.sourceIdDuplicates}}
+          </small>
+          <small *ngIf="mappingForm.errors?.valueKeyDuplicates" class="form-text text-danger">
+            Duplicate value keys: {{mappingForm.errors?.valueKeyDuplicates}}
+          </small>
+        </label>
+
+        <div class="input-group" [formGroupName]="i">
+          <input type="text" class="form-control" placeholder="Source ID" formControlName="sourceId" required/>
+          <input type="text" class="form-control" placeholder="Value key" formControlName="valueKey" required
+                 list="supportedKeys"/>
+          <datalist id="supportedKeys">
+            <option *ngFor="let key of valueKeys" [value]="key"></option>
+          </datalist>
+          <div class="input-group-append">
+            <button class="btn btn-outline-danger" (click)="deleteItemClicked(i)"><i class="fa fa-trash"></i></button>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-6">
+            <small class="text-info" *ngIf="map.get('sourceId')?.pending">
+              <i class="fa fa-spinner fa-spin"></i>
+              Checking...
+            </small>
+            <ng-container *ngIf="map.get('sourceId')?.errors; let err">
+              <small class="text-danger" *ngIf="err.isUsed">
+                Source ID is already used
+                <span *ngIf="err.nodeId">in <a [routerLink]="['/nodes', err.nodeId]">{{err.nodeName}}</a></span>
+              </small>
+            </ng-container>
+          </div>
+          <div class="col-6" style="margin-left: -1.5rem;">
+            <small class="text-warning" *ngIf="map.get('valueKey')?.valueKeyNotSupported">
+              Value key is not supported by DWH
+            </small>
+          </div>
+        </div>
+      </div>
+      <button class="btn btn-outline-success" (click)="addItemClicked()"><i class="fa fa-plus"></i> Add mapping</button>
+
+    </div>
+  </div>
+
+  <button class="btn btn-outline-primary mr-2" (click)="saveClicked()"
+          [disabled]="nodeForm.invalid || mappingForm.invalid">
+    <i class="fa fa-check"></i> Save
+  </button>
+  <button class="btn btn-outline-secondary mr-2" (click)="resetClicked()"><i class="fa fa-times"></i> Reset</button>
+
+</form>

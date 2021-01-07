@@ -1,0 +1,7 @@
+.child-item+.child-item {
+  padding-left: 0;
+}
+
+.child-item+.child-item::before {
+  content: ", ";
+}

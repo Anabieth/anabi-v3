@@ -1,0 +1,88 @@
+<ng-template #valueList let-values let-showAll="showAll">
+  <ul class="card-text list-inline d-inline-block">
+    <li class="value list-inline-item" *ngFor="let item of values"
+        [class.d-none]="!showAll && !item.isRecent" [title]="item.timestamp | dateTime">
+      <i class="text-muted fa" [ngClass]="getValueIcon(item.type)"></i>
+      <span class="pl-1" [class.text-muted]="!item.isRecent">{{item.value | number:'.2-2'}}</span>
+      <span class="text-muted">{{getValueUnit(item.type)}}</span>
+    </li>
+  </ul>
+</ng-template>
+
+<ng-template #modelList let-values let-showAll="showAll">
+  <ul class="card-text list-inline d-inline-block">
+    <li class="value list-inline-item" *ngFor="let item of values"
+        [class.d-none]="!showAll && !item.isRecent"
+        [title]="'@ ' + (item.timestamp | dateTime) + '\n' + item.description">
+      <i class="text-muted fa fa-cogs"></i>
+      <span class="pl-1" [class.text-muted]="!item.isRecent">{{item.label}}</span>
+    </li>
+    <li *ngIf="values && values.length > 0" class="value list-inline-item"
+        title="Management recommendations @ SAMSwiki">
+      <a target="_blank"
+         href="https://wiki.sams-project.eu/index.php/SAMS-system_based_recommendations/management_options">
+        <i class="fa fa-info-circle"></i>
+      </a>
+    </li>
+  </ul>
+</ng-template>
+
+<div class="row">
+  <div class="col card-columns">
+    <div class="card" *ngFor="let hive of hives" [class.border-success]="hive.updatedRecenlty">
+      <div class="card-header">
+        <h4 class="mb-0">
+          <app-node-label [node]="hive"></app-node-label>
+        </h4>
+        <small class="d-block text-muted" *ngIf="hive.location">
+          <i class="fa fa-map-marker-alt"></i>
+          {{hive.location}}</small>
+      </div>
+
+      <ul class="list-group list-group-flush">
+        <li class="list-group-item list-group-item-action" [class.d-none]="!hive.showAll && !hive.isActive"
+            (click)="openLastMeasurementsDialog(hive)">
+          <ng-container [ngTemplateOutlet]="valueList"
+                        [ngTemplateOutletContext]="{ $implicit: hive.latestMeasurements, showAll: hive.showAll }">
+          </ng-container>
+          <ng-container [ngTemplateOutlet]="modelList"
+                        [ngTemplateOutletContext]="{ $implicit: hive.latestModelValues, showAll: hive.showAll }">
+          </ng-container>
+        </li>
+        <li class="list-group-item list-group-item-action small" *ngFor="let child of hive.children"
+            [class.d-none]="!hive.showAll && !child.isActive" (click)="openLastMeasurementsDialog(child)">
+          <p class="mb-0">
+            <app-node-label [node]="child"></app-node-label>
+          </p>
+          <ng-container [ngTemplateOutlet]="valueList"
+                        [ngTemplateOutletContext]="{ $implicit: child.latestMeasurements, showAll: hive.showAll }">
+          </ng-container>
+          <ng-container [ngTemplateOutlet]="modelList"
+                        [ngTemplateOutletContext]="{ $implicit: child.latestModelValues, showAll: hive.showAll }">
+          </ng-container>
+        </li>
+        <li class="list-group-item list-group-item-action py-1 text-center text-muted small cursor-pointer"
+          (click)="hive.showAll = !hive.showAll">
+          <i class="fa" [ngClass]="{ 'fa-angle-double-up': hive.showAll, 'fa-angle-double-down': !hive.showAll}"></i>
+          <span class="pl-1">{{ hive.showAll ? 'Hide': 'Show'}} inactive sensors</span>
+        </li>
+        <li class="list-group-item">
+          <button class="btn btn-sm btn-outline-secondary mr-1" (click)="openReports(hive)">
+            <i class="fa fa-chart-line"></i> Reports</button>
+          <button class="btn btn-sm btn-outline-secondary mr-1" [routerLink]="['/nodes', hive.id]">
+            <i class="fa fa-edit"></i> Edit</button>
+        </li>
+      </ul>
+      <div class="card-footer border-0 bg-white">
+        <button class="btn btn-sm btn-light text-muted" (click)="fetchLatestValues(hive)">
+          <i class="fa fa-sync-alt"></i> Reload
+        </button>
+
+        <small class="text-muted float-right pt-1" [title]="hive.updateTs | dateTime">
+          <i class="fa fa-spinner fa-spin" [hidden]="!hive.updateInProgress"></i>
+          updated {{hive.updateTs | timeAgo}}
+        </small>
+      </div>
+    </div>
+  </div>
+</div>

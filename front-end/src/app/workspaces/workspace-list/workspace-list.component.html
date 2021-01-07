@@ -1,0 +1,142 @@
+<h1>
+  Available workspaces
+</h1>
+
+<div class="col-12 col-lg-10 pl-1 pr-1">
+  <div>
+    <div class="font-italic border-bottom border-black mb-2" style="color:#08BF74">
+      <div>
+        <i class="fa fa-user"></i> Own workspaces
+        <button class="btn btn-sm btn-outline-success mb-2" (click)="edit(null)">
+          <i class="fa fa-plus"></i> Create new
+        </button>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="notice" [class.notice-success]="ws.id == (service.activeWorkspace$ | async)?.id" *ngFor="let ws of ownWorkspaces">
+    <span>{{ws.name}}</span>
+    <h6>{{ws.owner}}</h6>
+    <div class="btn-group">
+      <button class="btn btn-sm btn-outline-primary" (click)="service.setActiveWorkspace(ws)">
+        <i class="fa fa-eye"></i> Activate
+      </button>
+      <div class="btn-group" ngbDropdown role="group" aria-label="Button group with nested dropdown">
+        <button type="button" class="btn btn-sm btn-outline-primary dropdown-toggle-split" ngbDropdownToggle></button>
+        <div class="dropdown-menu" ngbDropdownMenu>
+          <button ngbDropdownItem class="btn btn-sm btn-outline-warning" (click)="edit(ws)">
+            <i class="fa fa-pen"></i> Edit
+          </button>
+          <button ngbDropdownItem class="btn btn-sm btn-outline-info" (click)="share(ws)">
+            <i class="fa fa-share-alt"></i> Share
+          </button>
+          <button ngbDropdownItem class="btn btn-sm btn-outline-danger" (click)="delete(ws)">
+            <i class="fa fa-trash"></i> Delete
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<div *ngIf="sharedWorkspaces.length > 0" class="col-12 col-lg-10 pl-1 pr-1">
+  <div class="font-italic border-bottom border-black mb-2" style="color:#45ABCD">
+    <i class="fa fa-share-alt"></i> Shared workspaces
+  </div>
+  <div class="notice" [class.notice-info]="ws.id == (service.activeWorkspace$ | async)?.id" *ngFor="let ws of sharedWorkspaces">
+    <span>{{ws.name}}</span>
+    <h6>{{ws.owner}}</h6>
+    <div class="btn-group">
+      <button class="btn btn-sm btn-outline-primary" (click)="service.setActiveWorkspace(ws)">
+        <i class="fa fa-eye"></i> Activate
+      </button>
+      <div class="btn-group" ngbDropdown role="group" aria-label="Button group with nested dropdown">
+        <button type="button" class="btn btn-sm btn-outline-primary dropdown-toggle-split" ngbDropdownToggle></button>
+        <div class="dropdown-menu" ngbDropdownMenu>
+          <button ngbDropdownItem class="btn btn-sm btn-outline-danger" (click)="leave(ws)">
+            <i class="fa fa-user-slash"></i> Leave
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<ng-template #renameDialog let-c="close" let-d="dismiss">
+  <div class="modal-header">
+    <h5 class="modal-title">
+      {{currentWorkspace.id ? 'Edit' : 'New'}} workspace</h5>
+    <button type="button" class="close" aria-label="Close" (click)="d()">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <div class="form-group" (keyup.enter)="currentWorkspace.name?c():''">
+      <label for="name">Name</label>
+      <input required type="text" id="name" name="name" #name="ngModel" class="form-control" id="name" placeholder="Enter workspace name" [(ngModel)]="currentWorkspace.name" ngbAutoFocus>
+    </div>
+    <div *ngIf="name.invalid && (name.dirty || name.touched)" class="alert alert-danger">
+      <div *ngIf="name.errors.required">
+        Name is required
+      </div>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button [disabled]="!currentWorkspace.name" type="button" class="btn btn-outline-success" (click)=c()><i class="fa fa-check"></i> Save</button>
+    <button type="button" class="btn btn-outline-secondary" (click)=d()><i class="fa fa-times"></i> Cancel</button>
+  </div>
+</ng-template>
+
+<ng-template #shareDialog let-c="close" let-d="dismiss">
+  <div class="modal-header">
+    <h5 class="modal-title">{{currentWorkspace.name}} &ndash; Sharing options</h5>
+    <button type="button" class="close" aria-label="Close" (click)="c()">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <h6><strong>Share with others</strong></h6>
+    <button *ngIf="!currentWorkspace.sharingKey" class="btn btn-outline-success" (click)="createLink()"><i class="fa fa-share-alt"></i> Create sharing link
+    </button>
+    <div *ngIf="currentWorkspace.sharingKey" class="form-group">
+      <div class="input-group">
+        <input type="text" class="form-control" id="link" [value]="getSharingLink(currentWorkspace)" readonly>
+        <div class="input-group-append">
+          <button class="btn btn-outline-danger" (click)="deleteLink()"><i class="fa fa-trash"></i></button>
+        </div>
+      </div>
+      <small class="form-text text-muted">You can send other people a link to your workspace so anyone with the link can
+        join it. By sharing your workspace, you <b>agree</b> that your <b>username and apiary information (if any) will be seen by anyone, who will use this link</b>.
+      </small>
+    </div>
+  </div>
+  <div class="modal-body pt-0">
+    <h6><strong>Current users</strong></h6>
+    <table class="table table-hover">
+      <tbody>
+        <tr colspan="2" *ngIf="!currentWorkspace.invitedUsers || currentWorkspace.invitedUsers.lenght == 0">
+          <td>
+            No users joined yet
+          </td>
+        </tr>
+        <tr *ngFor="let user of currentWorkspace.invitedUsers">
+          <td>
+            {{user.fullName}}
+          </td>
+          <td class="text-right">
+            <button class="btn btn-sm btn-outline-danger btn-table mr-1" (click)="kickUser(user.userName)">
+              <i class="fa fa-user-slash"></i> Remove
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-outline-secondary" (click)=c() ngbAutoFocus><i class="fa fa-times"></i> Exit
+    </button>
+  </div>
+</ng-template>

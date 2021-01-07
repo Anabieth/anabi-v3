@@ -1,0 +1,35 @@
+version: '2'
+
+volumes:
+  data:
+
+services:
+  mongo:
+    container_name: bees-dwh-mongo
+    image: "mongo:4.2"
+    restart: always
+    volumes:
+      - data:/data/db
+
+  web-api:
+    container_name: bees-dwh-web-api
+    image: "registry.science.itf.llu.lv/bees-dwh-web-api"
+    restart: always
+    ports:
+      - "127.0.0.1:8088:8080"
+    depends_on:
+      - "mongo"
+      - "dwh-core"
+    environment:
+      - JAVA_OPTIONS=-Xmx600m
+      - AUTH0_CLIENT=
+      - AUTH0_SECRET=
+
+  dwh-core:
+    container_name: bees-dwh-core
+    image: "registry.science.itf.llu.lv/bees-dwh-core"
+    restart: always
+    depends_on:
+      - "mongo"
+    environment:
+      - JAVA_OPTIONS=-Xmx600m

@@ -1,0 +1,12 @@
+<ng-template #nodeSearchTemplate let-item="result" let-term="term">
+  <i class="fa pr-1" [ngClass]="getIcon(item.type)" [style.padding-left]="item.level+'em'"></i>
+  <ngb-highlight class="pr-1" [result]="item.name" [term]="term"></ngb-highlight>
+  <small class="text-muted">
+    <ngb-highlight [result]="item.location" [term]="term"></ngb-highlight>
+  </small>
+</ng-template>
+
+<input type="text" class="form-control" placeholder="Search node by name, location or type" [ngbTypeahead]="searchNode$"
+  [resultTemplate]="nodeSearchTemplate" (focus)="manualEvents$.next($event.target.value)"
+  (click)="manualEvents$.next($event.target.value)" (selectItem)="nodeItemSelected($event)" [value]="inputValue"
+  [inputFormatter]="nodeInputFormatter">

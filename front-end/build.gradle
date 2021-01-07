@@ -1,0 +1,53 @@
+plugins {
+  id "com.moowork.node" version "1.2.0"
+}
+
+apply plugin: 'base'
+
+node {
+  download = project.hasProperty('downloadNode')
+  version = '10.3.0'
+  npmVersion = '6.1.0'
+}
+
+task npmBuild(type: NpmTask) {
+  dependsOn npmInstall
+  args = ['run', 'buildProd']
+}
+
+task npmTest(type: NpmTask) {
+  dependsOn npmInstall
+  args = ['run', 'testHeadless']
+}
+
+task distTar(type: Tar) {
+  dependsOn npmBuild
+  from "dist/front-end"
+  baseName = "bees-dwh-front-end"
+  extension = "tar.gz"
+  destinationDir = file("dist")
+//  exclude("*.tar.gz")
+  version = project.version
+  compression = Compression.GZIP
+}
+
+clean {
+  delete "build"
+  delete "dist"
+  delete "tests"
+  delete "coverage"
+}
+
+task cleanAll(type: Delete) {
+  dependsOn clean
+  delete "node_modules"
+  delete ".gradle"
+}
+
+assemble {
+  dependsOn distTar
+}
+
+check {
+  dependsOn npmTest
+}

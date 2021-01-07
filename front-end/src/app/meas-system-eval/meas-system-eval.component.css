@@ -1,0 +1,30 @@
+.my-border {
+  border: 1px groove #ddd;
+  margin: 0 0 5em 0;
+  padding: 0 1.2em 0 1em;
+}
+
+.legend-border {
+  font-size: 1.2em;
+  font-weight: bold;
+  text-align: left;
+  width: auto;
+}
+
+.person {
+  cursor: pointer;
+}
+
+.card-header {
+  cursor: pointer;
+}
+
+.my-tab-active {
+  color: #f8c537;
+  font-weight: bold;
+}
+
+.my-tab-non-active {
+  color: #242017;
+  font-weight: normal;
+}
