@@ -9,6 +9,7 @@ export class SamsNode {
   updateTs: Date | string;
   updateInProgress = false;
   updatedRecenlty: boolean;
+  notCollapsed?: boolean;
 
   constructor(
     public name?: string,
@@ -39,7 +40,7 @@ export interface LatestMeasurement {
 
 export interface LatestModelValue {
   modelCode: string;
-  timestamp: string ;
+  timestamp: string;
   label: string;
   description: string;
   rawValue: any;

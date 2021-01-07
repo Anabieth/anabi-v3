@@ -76,8 +76,8 @@ public class NodeLatestValueService {
     }
 
     @PreAuthorize("@user.hasNodeAccess(#nodeId)")
-    public Map<String, List<DwhValueBean>> getLatestMeasurements(String id) {
-        Node node = fetchLatestValues(id);
+    public Map<String, List<DwhValueBean>> getLatestMeasurements(String nodeId) {
+        Node node = fetchLatestValues(nodeId);
         return node.getLastValues();
     }
 }

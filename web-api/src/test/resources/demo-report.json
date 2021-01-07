@@ -1,0 +1,54 @@
+{
+  "code": "demo-report",
+  "name": "Demo report with modelling",
+  "data": [
+    {
+      "name": "timestamp",
+      "type": "timestamp",
+      "values": [
+        "2020-12-10T07:07:00Z",
+        "2020-12-10T07:13:00Z",
+        "2020-12-10T07:18:00Z",
+        "2020-12-10T07:24:00Z",
+        "2020-12-10T07:30:00Z"
+      ]
+    },
+    {
+      "name": "state",
+      "type": "category",
+      "categories": [
+        "ok",
+        "nok"
+      ],
+      "values": [
+        "ok",
+        "ok",
+        "ok",
+        "nok",
+        "ok"
+      ]
+    },
+    {
+      "name": "weightBefore",
+      "type": "weight",
+      "values": [
+        50.235,
+        50.26,
+        50.235,
+        51.905,
+        51.93
+      ]
+    },
+    {
+      "name": "actualDelta",
+      "type": "weight",
+      "values": [
+        -1.6650009,
+        0.024997711,
+        -1.6699982,
+        3.334999,
+        -3.3600006
+      ]
+    }
+  ]
+}

@@ -61,6 +61,16 @@
           <a class="nav-link" routerLinkActive="active" routerLink="system-eval">Monitoring system evaluation</a>
         </nav>
       </div>
+      <div class="pl-3 pb-2 border-top d-md-block" [ngClass]="navbarOpen ? 'd-block' : 'd-none'">
+        <p class="pt-3 pb-2 m-0 text-muted text-uppercase font-weight-bold">Knowledge base</p>
+        <nav class="nav flex-md-column">
+          <a class="nav-link" href="https://wiki.sams-project.eu/index.php/Main_Page" target="_blank">
+            <img src="assets/icon.png">
+            SAMSwiki
+            <i class="fa fa-external-link-alt"></i>
+          </a>
+        </nav>
+      </div>
     </div>
     <div class="col-12 col-md-9 col-lg-10 pt-3">
       <main>

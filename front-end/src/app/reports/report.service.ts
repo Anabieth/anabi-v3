@@ -120,7 +120,8 @@ export class ReportService {
                 label,
                 data: d.values.map((v, i) => ({ t: new Date(ts.values[i]), y: v })),
                 type: d.type,
-                axisType: d.type === 'category' ? d.name : d.type,
+                axisType: d.type === 'category' ? report.code+'-'+d.name : d.type,
+                axisLabel: d.type === 'category' ? report.name : d.type,
                 hasCategory,
                 categories: d.categories
               });

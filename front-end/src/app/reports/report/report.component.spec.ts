@@ -232,8 +232,8 @@ describe('ReportComponent', () => {
     it('as chart', () => {
       spyOn(service, 'getDatasets').and.returnValues(
         of([
-          { axisType: 'typeA', label: 'A', type: 'test', data: [1, 2, 3] },
-          { axisType: 'typeB', label: 'B', type: 'test', data: [4, 5, 6] }
+          { axisType: 'typeA', axisLabel: 'Type A', label: 'A', type: 'test', data: [1, 2, 3] },
+          { axisType: 'typeB', axisLabel: 'Type B', label: 'B', type: 'test', data: [4, 5, 6] }
         ])
       );
       component.requestDataClicked();

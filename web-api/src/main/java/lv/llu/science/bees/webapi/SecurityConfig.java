@@ -76,6 +76,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .authorizeRequests()
                 .antMatchers("/token").permitAll()
+                .antMatchers("/").permitAll()
                 .anyRequest().authenticated();
 
         http.oauth2ResourceServer()

@@ -1,3 +1,29 @@
 tbody > tr.no-hover:hover {
   background: inherit;
 }
+
+.notice {
+    padding: 15px;
+    background-color: #fafafa;
+    border-left: 6px solid #7f7f84;
+    margin-bottom: 12px;
+    -webkit-box-shadow: 0 5px 8px -6px rgba(0,0,0,.2);
+       -moz-box-shadow: 0 5px 8px -6px rgba(0,0,0,.2);
+            box-shadow: 0 5px 8px -6px rgba(0,0,0,.2);
+}
+.notice-success {
+    border-color: #08BF74;
+}
+.notice-success > span {
+    color: #08BF74;
+    font-weight: bold;
+}
+
+.notice-info {
+    border-color: #45ABCD;
+}
+
+.notice-info > span {
+    color: #45ABCD;
+    font-weight: bold;
+}

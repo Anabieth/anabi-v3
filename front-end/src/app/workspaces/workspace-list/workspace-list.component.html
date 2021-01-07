@@ -2,73 +2,67 @@
   Available workspaces
 </h1>
 
-<table class="table table-hover">
-  <thead>
-    <tr>
-      <th scope="col">Name</th>
-      <th scope="col">Owner</th>
-      <th scope="col">Actions</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr class="no-hover">
-      <th colspan="3" class="font-italic">
+<div class="col-12 col-lg-10 pl-1 pr-1">
+  <div>
+    <div class="font-italic border-bottom border-black mb-2" style="color:#08BF74">
+      <div>
         <i class="fa fa-user"></i> Own workspaces
-      </th>
-    </tr>
-    <tr *ngFor="let ws of ownWorkspaces">
-      <td [class.font-weight-bold]="ws.id == (service.activeWorkspace$ | async)?.id">
-        {{ws.name}}
-      </td>
-      <td>me</td>
-      <td>
-        <button class="btn btn-sm btn-outline-primary btn-table mr-1" (click)="service.setActiveWorkspace(ws)">
-          <i class="fa fa-eye"></i> Activate
-        </button>
-        <button class="btn btn-sm btn-outline-warning btn-table mr-1" (click)="edit(ws)">
-          <i class="fa fa-pen"></i> Edit
-        </button>
-        <button class="btn btn-sm btn-outline-info btn-table mr-1" (click)="share(ws)">
-          <i class="fa fa-share-alt"></i> Share
-        </button>
-        <button class="btn btn-sm btn-outline-danger btn-table" (click)="delete(ws)">
-          <i class="fa fa-trash"></i> Delete
-        </button>
-      </td>
-    </tr>
-    <tr class="no-hover">
-      <td colspan="3" class="pb-4">
-        <button class="btn btn-sm btn-outline-success btn-table mr-1" (click)="edit(null)">
+        <button class="btn btn-sm btn-outline-success mb-2" (click)="edit(null)">
           <i class="fa fa-plus"></i> Create new
         </button>
-      </td>
-    </tr>
-  </tbody>
+      </div>
+    </div>
 
-  <tbody *ngIf="sharedWorkspaces.length > 0">
-    <tr class="no-hover">
-      <th colspan="3" class="font-italic">
-        <i class="fa fa-share-alt"></i> Shared workspaces
-      </th>
-    </tr>
-    <tr *ngFor="let ws of sharedWorkspaces">
-      <td [class.font-weight-bold]="ws.id == (service.activeWorkspace$ | async)?.id">
-        {{ws.name}}
-      </td>
-      <td>
-        {{ws.owner}}
-      </td>
-      <td>
-        <button class="btn btn-sm btn-outline-primary btn-table mr-1" (click)="service.setActiveWorkspace(ws)">
-          <i class="fa fa-eye"></i> Activate
-        </button>
-        <button class="btn btn-sm btn-outline-danger btn-table" (click)="leave(ws)">
-          <i class="fa fa-user-slash"></i> Leave
-        </button>
-      </td>
-    </tr>
-  </tbody>
-</table>
+  </div>
+
+  <div class="notice" [class.notice-success]="ws.id == (service.activeWorkspace$ | async)?.id" *ngFor="let ws of ownWorkspaces">
+    <span>{{ws.name}}</span>
+    <h6>{{ws.owner}}</h6>
+    <div class="btn-group">
+      <button class="btn btn-sm btn-outline-primary" (click)="service.setActiveWorkspace(ws)">
+        <i class="fa fa-eye"></i> Activate
+      </button>
+      <div class="btn-group" ngbDropdown role="group" aria-label="Button group with nested dropdown">
+        <button type="button" class="btn btn-sm btn-outline-primary dropdown-toggle-split" ngbDropdownToggle></button>
+        <div class="dropdown-menu" ngbDropdownMenu>
+          <button ngbDropdownItem class="btn btn-sm btn-outline-warning" (click)="edit(ws)">
+            <i class="fa fa-pen"></i> Edit
+          </button>
+          <button ngbDropdownItem class="btn btn-sm btn-outline-info" (click)="share(ws)">
+            <i class="fa fa-share-alt"></i> Share
+          </button>
+          <button ngbDropdownItem class="btn btn-sm btn-outline-danger" (click)="delete(ws)">
+            <i class="fa fa-trash"></i> Delete
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<div *ngIf="sharedWorkspaces.length > 0" class="col-12 col-lg-10 pl-1 pr-1">
+  <div class="font-italic border-bottom border-black mb-2" style="color:#45ABCD">
+    <i class="fa fa-share-alt"></i> Shared workspaces
+  </div>
+  <div class="notice" [class.notice-info]="ws.id == (service.activeWorkspace$ | async)?.id" *ngFor="let ws of sharedWorkspaces">
+    <span>{{ws.name}}</span>
+    <h6>{{ws.owner}}</h6>
+    <div class="btn-group">
+      <button class="btn btn-sm btn-outline-primary" (click)="service.setActiveWorkspace(ws)">
+        <i class="fa fa-eye"></i> Activate
+      </button>
+      <div class="btn-group" ngbDropdown role="group" aria-label="Button group with nested dropdown">
+        <button type="button" class="btn btn-sm btn-outline-primary dropdown-toggle-split" ngbDropdownToggle></button>
+        <div class="dropdown-menu" ngbDropdownMenu>
+          <button ngbDropdownItem class="btn btn-sm btn-outline-danger" (click)="leave(ws)">
+            <i class="fa fa-user-slash"></i> Leave
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 
 <ng-template #renameDialog let-c="close" let-d="dismiss">
   <div class="modal-header">
@@ -79,7 +73,7 @@
     </button>
   </div>
   <div class="modal-body">
-    <div class="form-group">
+    <div class="form-group" (keyup.enter)="currentWorkspace.name?c():''">
       <label for="name">Name</label>
       <input required type="text" id="name" name="name" #name="ngModel" class="form-control" id="name" placeholder="Enter workspace name" [(ngModel)]="currentWorkspace.name" ngbAutoFocus>
     </div>

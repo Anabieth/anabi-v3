@@ -105,7 +105,7 @@ describe('ReportService', () => {
       expect(datasets[0]).toEqual(jasmine.objectContaining(
         { axisType: 'temperature', type: 'temperature', label: 'hive1 - rep-simple', hasCategory: false }));
       expect(datasets[1]).toEqual(jasmine.objectContaining(
-        { axisType: 'state', type: 'category', label: 'hive2 - rep-model (state)', hasCategory: true, categories: ['x', 'y'] }));
+        { axisType: 'rep-model-state', type: 'category', label: 'hive2 - rep-model (state)', hasCategory: true, categories: ['x', 'y'] }));
       expect(datasets[2]).toEqual(jasmine.objectContaining(
         { axisType: 'temperature', type: 'temperature', label: 'hive2 - rep-model (temp)', hasCategory: true }));
       expect(datasets[3]).toEqual(jasmine.objectContaining(

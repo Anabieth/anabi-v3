@@ -1,35 +1,43 @@
 <h1>
   User node hierarchy
+</h1>
 
-  <button (click)="newChildClicked(null)" class="btn btn-outline-secondary mt-2 float-right">
+<div class="row mb-2 ml-2">
+  <button (click)="newChildClicked(null)" class="btn btn-outline-secondary mt-2 mr-2">
     <i class="fa fa-plus"></i> Add root node
   </button>
 
   <a routerLink="sams" class="btn btn-outline-primary mt-2 mr-1 float-right">
     <i class="fa fa-plus"></i> Register SAMS hive
   </a>
-</h1>
+</div>
 
 <div class="row">
-  <div class="col-8">
+  <div class="col-12 col-lg-8">
     <ng-template #recursiveCard let-list>
       <div *ngFor="let node of list" class="card" [class.border-secondary]="node.id === currentNode?.id">
-        <div class="card-header" (click)="editClicked(node)">
+        <div class="card-header pl-3 pr-1" (click)="editClicked(node)">
+          <i *ngIf="node.children?.length > 0" class="fas mr-2" (click)="node.notCollapsed = !node.notCollapsed; $event.stopPropagation()" [ngClass]="{'fa-chevron-down':!node.notCollapsed,'fa-chevron-up':node.notCollapsed}"></i>
           <app-node-label [node]="node" [showLocation]="true"></app-node-label>
-          <div class="buttons float-right">
-            <button class="btn btn-sm btn-outline-info mr-1" (click)="openReport(node.id)">
-              <i class="fa fa-search"></i> Reports
-            </button>
-            <a class="btn btn-sm btn-outline-primary mr-1" [routerLink]="node.id">
+          <div class="btn-group float-right col-12 col-sm-auto mt-sm-0 mt-1">
+            <a class="btn btn-sm btn-outline-primary" [routerLink]="node.id">
               <i class="fa fa-search"></i> Details
             </a>
-            <button class="btn btn-sm btn-outline-success" (click)="newChildClicked(node); $event.stopPropagation();">
-              <i class="fa fa-plus"></i> Add child
-            </button>
+            <div class="btn-group" ngbDropdown placement="bottom-right" role="group" aria-label="Button group with nested dropdown">
+              <button type="button" class="btn btn-sm btn-outline-primary dropdown-toggle-split" (click)="$event.stopPropagation()" ngbDropdownToggle></button>
+              <div class="dropdown-menu" ngbDropdownMenu>
+                <button ngbDropdownItem class="btn btn-sm btn-outline-info mr-1" (click)="openReport(node.id)">
+                  <i class="fa fa-search"></i> Reports
+                </button>
+                <button ngbDropdownItem class="btn btn-sm btn-outline-success" (click)="newChildClicked(node); $event.stopPropagation();">
+                  <i class="fa fa-plus"></i> Add child
+                </button>
+              </div>
+            </div>
           </div>
         </div>
 
-        <div *ngIf="node.children?.length > 0" class="card-body">
+        <div *ngIf="node.children?.length > 0 && node.notCollapsed" class="card-body">
           <ng-container *ngTemplateOutlet="recursiveCard; context:{ $implicit: node.children }"></ng-container>
         </div>
 
@@ -45,12 +53,13 @@
     <ng-container *ngTemplateOutlet="recursiveCard; context:{ $implicit: nodes }"> </ng-container>
   </div>
 
-  <div class="col-4">
+  <div class="col-12 col-lg-4 mt-lg-0 mt-4">
     <div class="sidebar">
 
       <div class="card" *ngIf="currentNode">
         <div class="card-header">
           Node details
+          <i class="fas fa-times float-right" (click)="currentNode=null"></i>
         </div>
         <div class="card-body">
           <div class="form-group">
@@ -72,16 +81,15 @@
           <a class="btn btn-outline-primary mr-1" [routerLink]="currentNode.id">
             <i class="fa fa-search"></i> Details and mapping
           </a>
-          <button class="btn btn-outline-info" (click)="openReportList(currentNode.id)">
+          <button class="btn btn-outline-info mt-1" (click)="openReportList(currentNode.id)">
             <i class="fa fa-search"></i> Reports
           </button>
 
         </div>
-        <div class="card-footer">
-          <button class="btn btn-outline-success mr-2" (click)="saveClicked()"><i class="fa fa-check"></i> Save</button>
-          <button class="btn btn-outline-secondary mr-2" (click)="cancelClicked()"><i class="fa fa-times"></i> Cancel</button>
-          <button *ngIf="currentNode.id" class="btn btn-outline-danger float-right" (click)="deleteClicked()"><i
-            class="fa fa-trash"></i>
+        <div class="card-footer pl-sm-3 pr-sm-3 pl-1 pr-1">
+          <button class="btn btn-outline-success mr-sm-2 mr-1 mt-1" (click)="saveClicked()"><i class="fa fa-check"></i> Save</button>
+          <button class="btn btn-outline-secondary mr-sm-2 mr-1 mt-1" (click)="cancelClicked()"><i class="fa fa-times"></i> Cancel</button>
+          <button *ngIf="currentNode.id" class="btn btn-outline-danger float-right mt-1" (click)="deleteClicked()"><i class="fa fa-trash"></i>
             Delete
           </button>
         </div>

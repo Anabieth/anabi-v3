@@ -1,0 +1,277 @@
+= SAMS DW API
+:toc:
+:toclevels: 2
+
+:operation-curl-request-title: Example request
+:operation-response-body-title: Example response
+
+== Authentication
+
+SAMS DW API distinguishes requests done by regular users, and data-in requests done by hive monitoring devices.
+
+=== User authentication
+
+For user authentication and request authorization SAMS DW uses OAuth2 access tokens. User credential handling is provided by Auth0 service.
+
+In order to obtain access token, user has to follow non-interactive
+https://auth0.com/docs/flows/device-authorization-flow[authentication flow] provided by Auth0.
+
+First, authentication process should be initialized.
+Given `client_id` points to dedicated configuration for accessing SAMS DW API from external non-interactive tools.
+
+[source,bash]
+----
+curl --request POST \
+  --url 'https://sams-project.eu.auth0.com/oauth/device/code' \
+  --data '{ "client_id": "CGQ1juxBcCj44r1NEbLpcZC4OBbdHchV", "audience":"sams-dwh-web-api" }'
+----
+
+As a response Auth0 will provide details about next steps.
+
+[source,json]
+----
+{
+  "device_code": "lM...h9",
+  "user_code": "JD...QT",
+  "verification_uri": "https://sams-project.eu.auth0.com/activate",
+  "expires_in": 900,
+  "interval": 5,
+  "verification_uri_complete": "https://sams-project.eu.auth0.com/activate?user_code=JD...QT"
+}
+----
+
+Now user has to follow `verification_uri_complete` URL and *authorize request* on Auth0 platform.
+
+Next, authorization token can be obtained.
+
+[source,bash]
+----
+curl --request POST \
+  --url 'https://sams-project.eu.auth0.com/oauth/token' \
+  --data '{
+    "grant_type": "urn:ietf:params:oauth:grant-type:device_code",
+    "device_code": "lM...h9",
+    "client_id": "CGQ1juxBcCj44r1NEbLpcZC4OBbdHchV"
+  }'
+----
+
+In the response access token is provided.
+The token is valid for 24 hours and should be used in `Authorization` header in all further requests to SAMS DW API to get or manipulate data in the name of user.
+
+[source,json]
+----
+{
+  "access_token": "eyJ...TXA",
+  "expires_in": 86400,
+  "token_type": "Bearer"
+}
+----
+
+For more details refer to official documentation: https://auth0.com/docs/flows/call-your-api-using-the-device-authorization-flow
+
+=== Monitoring device authentication
+
+For monitoring devices SAMS API also uses OAuth2 tokens, but they are obtained using slightly different authentication flow.
+Device provides its credentials (`client_id` and `client_secret`) and obtains access token.
+The token is valid for 24 hours and is used for data-in requests.
+
+In order to obtain credentials for your device, please contact SAMS team via https://www.linkedin.com/groups/8960651/[LinkedIn].
+
+operation::token[snippets="curl-request,request-fields,response-body,response-fields"]
+
+== Workspaces
+
+SAMS DW objects, such as apiaries, hives, sensors, devices are organized within workspaces (like files in folders).
+Each user can have one or multiple workspaces. Workspaces can be shared between multiple users.
+
+IMPORTANT: For majority of SAMS DW API requests an active workspace ID has to be provided as `ws` header.
+
+Workspace management endpoints are available at `*/api/workspaces/{id}*`, where:
+
+[cols="1,3"]
+|===
+|`+id+`
+|Workspace id
+|===
+
+=== Workspace list
+operation::workspace-list[snippets="curl-request,response-body,response-fields"]
+
+=== Create workspace
+operation::workspace-add[snippets="curl-request,request-fields,response-body"]
+
+=== Rename workspace
+operation::workspace-edit[snippets="curl-request,request-fields,response-body"]
+
+=== Delete workspace
+operation::workspace-delete[snippets="curl-request"]
+
+=== Share workspace
+operation::workspace-share[snippets="curl-request,response-body,response-fields"]
+
+=== Unshare workspace
+operation::workspace-unshare[snippets="curl-request,response-body"]
+
+=== Joining workspace
+operation::workspace-invite[snippets="curl-request,request-fields,response-body,response-fields"]
+
+=== Leaving workspace / Removing users
+operation::workspace-remove[snippets="curl-request,request-fields,response-body"]
+
+== Nodes
+
+Concept of Node in the context of SAMS DW stands for any logically distinct unit relevant for
+user in terms of parameter measurements and storage. Main purpose of nodes is to provide
+flexible abstraction layer between beekeeping objects (like hives and apiaries) and monitoring
+infrastructure (sensors and devices).
+
+Nodes allow users to define the structure of his beekeeping objects (from a business
+perspective) and configure relevant data sources for these objects. System supports building
+of arbitrary hierarchy of nodes, which opens wide possibilities for structuring and organizing
+beekeepers objects of interest.
+
+Node management endpoints are available at `*/api/nodes/{id}*`, where:
+
+[cols="1,3"]
+|===
+|`+id+`
+|Node id
+|===
+
+=== List of nodes
+operation::node-list[snippets="curl-request,response-body,response-fields"]
+
+=== Node details
+operation::node-details[snippets="curl-request,response-body,response-fields"]
+
+=== Create node
+operation::node-add[snippets="curl-request,response-body"]
+
+=== Edit node
+operation::node-edit[snippets="curl-request,response-body"]
+
+=== Delete node
+operation::node-delete[snippets="curl-request"]
+
+=== Latest values
+operation::node-latest-values[snippets="curl-request,response-body,response-fields"]
+
+=== Latest measurements
+operation::node-latest-measurements[snippets="curl-request,response-body,response-fields"]
+
+=== Supported value keys
+operation::node-supported-value-keys[snippets="curl-request,response-body,response-fields"]
+
+=== Get source mappings
+operation::node-mapping[snippets="curl-request,response-body,response-fields"]
+
+=== Update source mappings
+operation::node-update-mapping[snippets="curl-request,response-body"]
+
+=== Check is source ID already used
+
+For interactive UIs (form validation) it might be useful to check uniqueness of provided source ID.
+
+operation::node-check-mapping[snippets="curl-request,response-body,response-fields"]
+
+== Measurement devices
+
+Measurement devices are regular Nodes with type `DEVICE`. In addition to regular Node functionality SAMS DW API provides
+special endpoints dedicated for devices. They are available at `*/api/devices/{id}*`, where:
+
+[cols="1,3"]
+|===
+|`+id+`
+|Device (node) id
+|===
+
+=== List of devices
+operation::device-list[snippets="curl-request,response-body,response-fields"]
+
+=== Device events and logs
+operation::device-events[snippets="curl-request,response-body,response-fields"]
+
+=== Toggle device activity
+operation::device-toggle-active[snippets="curl-request,response-body"]
+
+=== Data-In requests
+
+Data-In requests are made by hive monitoring devices and provide measurement values for storage and further processing.
+
+operation::data-in[snippets="curl-request,request-fields,response-body,response-fields"]
+
+=== Posting device logs
+Logs are accepted only from monitoring devices and are stored as is.
+
+operation::logs[snippets="curl-request"]
+
+== Models
+Models are algorithms implemented within SAMS DW and are used for specific processing of incoming data.
+API endpoints available at `*/api/models/{id}*` are used for enabling and configuring models.
+
+=== List of model templates
+Model templates are algorithms implemented within SAMS DW.
+
+operation::model-templates[snippets="curl-request,response-body,response-fields"]
+
+=== List of enabled models
+operation::model-list[snippets="curl-request,response-body,response-fields"]
+
+=== Get model details
+operation::model-details[snippets="curl-request,response-body"]
+
+=== New model definition
+operation::model-create[snippets="curl-request,response-body"]
+
+=== Edit model definition
+operation::model-edit[snippets="curl-request,response-body"]
+
+=== Delete model definition
+operation::model-delete[snippets="curl-request"]
+
+== Reports
+Reports provide a data-out functionality and allow to fetch historical raw measurement data
+as well as processing and modelling results for longer time periods.
+
+=== Report list
+operation::report-list[snippets="curl-request,response-body"]
+
+=== Report data
+operation::report-data[snippets="curl-request,path-parameters,request-parameters,response-body,response-fields"]
+
+== Hardware configs
+
+SAMS DW provides functionality for remote configuration of various measurement devices.
+This part of API affects whole system and thus is available only for hardware engineers.
+
+=== List of configs
+
+operation::config-list[snippets="curl-request,response-body,response-fields"]
+
+=== Config details
+
+operation::config-details[snippets="curl-request,response-body"]
+
+=== Create new config
+
+operation::config-create[snippets="curl-request,response-body"]
+
+=== Edit config
+
+operation::config-edit[snippets="curl-request,response-body"]
+
+=== Delete config
+
+operation::config-delete[snippets="curl-request"]
+
+=== Set default config
+
+operation::config-set-default[snippets="curl-request,response-body"]
+
+=== Fetch config by device
+
+SAMS DW API provides dedicated endpoint without parameters which is available only for monitoring devices and allows
+them to fetch configuration assigned to the requesting device. Endpoint will provide *default* configuration if
+other configuration is not explicitly assigned to the device.
+
+operation::config-device[snippets="curl-request,response-body"]

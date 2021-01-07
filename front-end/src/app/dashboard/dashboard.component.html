@@ -17,6 +17,13 @@
       <i class="text-muted fa fa-cogs"></i>
       <span class="pl-1" [class.text-muted]="!item.isRecent">{{item.label}}</span>
     </li>
+    <li *ngIf="values && values.length > 0" class="value list-inline-item"
+        title="Management recommendations @ SAMSwiki">
+      <a target="_blank"
+         href="https://wiki.sams-project.eu/index.php/SAMS-system_based_recommendations/management_options">
+        <i class="fa fa-info-circle"></i>
+      </a>
+    </li>
   </ul>
 </ng-template>
 

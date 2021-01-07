@@ -192,7 +192,7 @@ export class ReportComponent implements OnInit {
             return;
           }
 
-          let axisLabel = ds.axisType.charAt(0).toUpperCase() + ds.axisType.slice(1);
+          let axisLabel = ds.axisLabel.charAt(0).toUpperCase() + ds.axisLabel.slice(1);
           const units = SamsNodeUtils.getValueUnit(ds.axisType);
           if (units) {
             axisLabel = axisLabel + ', ' + units;
@@ -254,8 +254,6 @@ export class ReportComponent implements OnInit {
 
         this.chart = new Chart('chartCanvas', options);
       });
-
-
   }
 
   downloadClicked() {
