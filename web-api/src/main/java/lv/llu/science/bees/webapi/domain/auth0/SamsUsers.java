@@ -35,7 +35,7 @@ public class SamsUsers {
         TokenRequestBean requestBean = new TokenRequestBean();
         requestBean.setClientId(clientId);
         requestBean.setClientSecret(clientSecret);
-        requestBean.setAudience("https://sams-project.eu.auth0.com/api/v2/");
+        requestBean.setAudience("https://dev-1pxokwng.eu.auth0.com/api/v2/");
         requestBean.setGrantType("client_credentials");
 
         try {

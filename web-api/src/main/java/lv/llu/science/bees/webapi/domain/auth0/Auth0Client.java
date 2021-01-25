@@ -16,7 +16,7 @@ import java.util.Map;
 
 @Component
 @Profile("prod")
-@FeignClient(name = "Auth0", url = "https://sams-project.eu.auth0.com/")
+@FeignClient(name = "Auth0", url = "https://dev-1pxokwng.eu.auth0.com/")
 public interface Auth0Client {
 
     @Headers("Accept: application/json")

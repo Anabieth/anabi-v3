@@ -15,7 +15,7 @@ spring:
 sams:
   token:
     local-issuer: https://sams.local/
-    remote-issuer: https://sams-project.eu.auth0.com/
+    remote-issuer: https://dev-1pxokwng.eu.auth0.com/
     audience: sams-dwh-web-api
     expireIn: 86400
   dwh:

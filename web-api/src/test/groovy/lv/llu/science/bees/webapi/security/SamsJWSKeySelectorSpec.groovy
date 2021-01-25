@@ -9,7 +9,7 @@ import spock.lang.Specification
 import java.security.Key
 
 class SamsJWSKeySelectorSpec extends Specification {
-    def remoteUri = 'https://sams-project.eu.auth0.com/'
+    def remoteUri = 'https://dev-1pxokwng.eu.auth0.com/'
     def localUri = 'http://local.issuer/'
     def selector = new SamsJWSKeySelector(remoteUri, localUri, Stub(Key))
 
