@@ -21,8 +21,8 @@ sams:
   dwh:
     address: http://localhost:8081/
 
-AUTH0_CLIENT: wtSMlmVnW4Q8VvcX1jS0RagcJnfkAbko
-AUTH0_SECRET: 184vuzsgLrf37kWyrmDvrkd0V2BJrYyMWErOlApclPSlnWzo-kG7K7fN5CGeZ-v0
+AUTH0_CLIENT: client
+AUTH0_SECRET: secret
 
 ---
 spring:
