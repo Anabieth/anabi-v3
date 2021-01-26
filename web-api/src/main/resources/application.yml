@@ -15,14 +15,14 @@ spring:
 sams:
   token:
     local-issuer: https://sams.local/
-    remote-issuer: https://dev-1pxokwng.eu.auth0.com/
+    remote-issuer: https://dev-42331gx2.us.auth0.com/
     audience: sams-dwh-web-api
     expireIn: 86400
   dwh:
     address: http://localhost:8081/
 
-AUTH0_CLIENT: wtSMlmVnW4Q8VvcX1jS0RagcJnfkAbko
-AUTH0_SECRET: 184vuzsgLrf37kWyrmDvrkd0V2BJrYyMWErOlApclPSlnWzo-kG7K7fN5CGeZ-v0
+AUTH0_CLIENT: Goi7MZiF0YCI4YAykw5gbd5Xky8s4JUj
+AUTH0_SECRET: v6sEKlu8WE6OVGpSXamVLEM8W9_IKSwg6eeaQJmY0qdCIrLfhfQP1j-GRDSOEL6K
 
 ---
 spring:
