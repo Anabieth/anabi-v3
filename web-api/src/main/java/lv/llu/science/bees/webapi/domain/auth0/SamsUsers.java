@@ -35,8 +35,8 @@ public class SamsUsers {
         log.info("clientId:" + clientId);
         log.info("clientSecret:" + clientSecret);
         TokenRequestBean requestBean = new TokenRequestBean();
-        requestBean.setClientId(clientId);
-        requestBean.setClientSecret(clientSecret);
+        requestBean.setClientId("Goi7MZiF0YCI4YAykw5gbd5Xky8s4JUj");
+        requestBean.setClientSecret("v6sEKlu8WE6OVGpSXamVLEM8W9_IKSwg6eeaQJmY0qdCIrLfhfQP1j-GRDSOEL6K");
         requestBean.setAudience("https://dev-42331gx2.us.auth0.com/api/v2/");
         requestBean.setGrantType("client_credentials");
         log.info("requestBean:" + requestBean);
