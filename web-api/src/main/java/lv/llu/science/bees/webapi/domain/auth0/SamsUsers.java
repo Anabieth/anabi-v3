@@ -32,14 +32,17 @@ public class SamsUsers {
     }
 
     private void renewTokenFeign() {
+        log.info("clientId:" + clientId);
+        log.info("clientSecret:" + clientSecret);
         TokenRequestBean requestBean = new TokenRequestBean();
         requestBean.setClientId(clientId);
         requestBean.setClientSecret(clientSecret);
         requestBean.setAudience("https://dev-42331gx2.us.auth0.com/api/v2/");
         requestBean.setGrantType("client_credentials");
-
+        log.info("requestBean:" + requestBean);
         try {
             token = auth0.getToken(requestBean);
+            log.info("token:" + token);
             token.setExpiresAt(ZonedDateTime.now().plusSeconds(token.getExpiresIn()));
             log.info("Renewed Auth0 token");
         } catch (FeignException ex) {
